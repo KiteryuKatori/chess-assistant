@@ -31,6 +31,9 @@ class Piece:
 		# Raise KeyError if `name` not in `imageDatabase`
 		self.image = Piece.imageDatabase[self.name][self.isBlack] # ♔ ♚ ♕ ♛ ♗ ♝ ♘ ♞ ♙ ♟ ♖ ♜
 		self.isAlive = True
+  
+	def setImage(self):
+		return self.image
 	
 	def printImage(self):
 		print(self.image)

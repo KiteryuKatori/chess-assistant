@@ -6,5 +6,5 @@ from Piece import *
 
 board = Board()
 cell  = Cell()
-Piece = Piece()
+Piece = Piece("king", True)
 

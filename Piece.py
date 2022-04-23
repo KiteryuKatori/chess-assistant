@@ -22,3 +22,4 @@ class Piece:
 
 		self.image = str() # ♔ ♚ ♕ ♛ ♗ ♝ ♘ ♞ ♙ ♟ ♖ ♜
 		self.isAlive = True
+		

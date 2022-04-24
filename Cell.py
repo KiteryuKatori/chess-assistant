@@ -1,7 +1,4 @@
 # Cell.py
-from curses.ascii import EM
-from queue import Empty
-
 
 class Cell:
 	def __init__(self, loc):
@@ -26,6 +23,6 @@ class Cell:
 		return self.piece
 
 	def defineSelf(self):
-		print(f"Loc = {self.loc}, Piece = {self.piece.name}")
+		print(f"Loc = {self.loc}, Piece = {self.piece}")
 		# print(f"Loc = {self.loc}, Piece = {self.piece.name}") how to return self.piece as an empty object without importing EM? 
 

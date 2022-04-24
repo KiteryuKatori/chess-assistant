@@ -32,14 +32,8 @@ class Piece:
 		self.image = Piece.imageDatabase[self.name][self.isBlack] # ♔ ♚ ♕ ♛ ♗ ♝ ♘ ♞ ♙ ♟ ♖ ♜
 		self.isAlive = True
   
-	def setImage(self):
+	def getImage(self):
 		return self.image
 	
 	def printImage(self):
 		print(self.image)
-  
-rookWhite= Piece("rook", True)
-rookBlack = Piece("rook", False)
-
-rookWhite.printImage()
-rookBlack.printImage()

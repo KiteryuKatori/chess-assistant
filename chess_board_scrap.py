@@ -97,7 +97,7 @@ board[6][5] = Piece("pawn",   False)
 board[6][6] = Piece("pawn",   False)
 board[6][7] = Piece("pawn",   False)
 
-board_update = []
+board_visualized = []
 
 for row in board:
     row_visualized = []
@@ -107,7 +107,7 @@ for row in board:
         else:
             row_visualized.append('')
     
-    board_update.append(row_visualized)
+    board_visualized.append(row_visualized)
 
 # for row in board_update:
 #     for piece in row:
@@ -115,4 +115,4 @@ for row in board:
 #         print(piece, end = ' ')
 #     print()    
     
-printBoardWPiece(board_update)
+printBoardWPiece(board_visualized)

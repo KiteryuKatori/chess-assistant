@@ -37,9 +37,13 @@ class Piece:
 	
 	def printImage(self):
 		print(self.image)
+		# print(self.image.encode("utf-8"))
   
-rookWhite= Piece("rook", True)
+rookWhite = Piece("rook", True)
 rookBlack = Piece("rook", False)
+
+# print(rookWhite)
+# print(f"name of rW = {rookWhite.name}")
 
 rookWhite.printImage()
 rookBlack.printImage()

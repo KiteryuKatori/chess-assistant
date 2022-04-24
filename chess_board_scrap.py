@@ -22,18 +22,16 @@ class Piece:
     def getImage(self):
         return self.image
 
-    def printImage(self):
+    def printImage(self): 
         print(self.image)
 
 
-def printBoard() -> None:
-    print('    ' + '   '.join([str(col) for col in range(8)]) )
-    for row in range(8):
-        print('  ' + ' ---' * 8) 
-        print(str(row) + ' ' + '|   ' * 8 + '|' )
-    print('  ' + ' ---' * 8) 
-    
-    
+# def printBoard() -> None:
+#     print('    ' + '   '.join([str(col) for col in range(8)]) )
+#     for row in range(8):
+#         print('  ' + ' ---' * 8) 
+#         print(str(row) + ' ' + '|   ' * 8 + '|' )
+#     print('  ' + ' ---' * 8) 
 
 def printBoardWPiece(board) -> None:
     BOARD_SIDE= range(8)
@@ -109,10 +107,6 @@ for row in board:
     
     board_update.append(row_visualized)
 
-# for row in board_update:
-#     for piece in row:
-#         if piece == '': piece = '*'
-#         print(piece, end = ' ')
-#     print()    
-    
+# printBoard()
+# print()
 printBoardWPiece(board_update)

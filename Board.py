@@ -51,5 +51,5 @@ class Board:
 		return self.board
 
 
-	def visulize(self):
+	def visualize(self):
 		pass

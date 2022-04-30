@@ -6,7 +6,6 @@ class Cell:
 		# 	- loc: list of 2 integers 
 		# 		tells the location of the cells
 		self.loc 				= loc
-		print(f"Cell class says hi at {self.loc}")
 		self.isOccupied			= False
 		self.isTransformable 	= False
 		self.Score 				= 0
@@ -21,13 +20,3 @@ class Cell:
 	def removePiece(self):
 		self.isOccupied = True
 		self.piece = None
-
-	def defineSelf(self):
-		# assert self.piece == None, "The Cell is empty" 
-		# the code above didn't work, why?
-
-		if self.piece == None:
-			print(f"Loc = {self.loc}, The cell is empty")
-			return
-		print(f"Loc = {self.loc}, Piece = {self.piece.name}")
-

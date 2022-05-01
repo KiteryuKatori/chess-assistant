@@ -19,21 +19,23 @@ class Cell:
 	def setPiece(self, Piece):
 		self.isOccupied = True
 		self.piece = Piece
-    
-    
-  def removePiece(self):
+
+	def removePiece(self):
 		self.isOccupied = True
 		self.piece = None
 
-    
-	def showPossibleMoves(currentBoardState):
+
+	def showPossibleMoves(self, currentBoardState):
 		"""
 		Parameters:
 			- currentBoardState: Board object
 				shows the current state of the chess board
 		Return:
-			- `listOfPossibleMoves`: list<list<2 integer>>
-				tells the all the possible of a piece ON this CELL
+			- `listOfPossibleMoves`: list<list<2 integers>>
+				tells all the possible moves of a piece ON this CELL
+		Extra: #for further use
+			- `listOfCapturableCell`: list<list<2 integers>>
+				tells ONLY the capturable cells from the upper list
 		Logic:
 			`listOfLegalMoves` is a MUST-HAVE parameter 
 			in the main area of the function, `listOfLegalMoves`
@@ -44,7 +46,20 @@ class Cell:
 			return list()
 
 		listOfLegalMoves = list()
+		listOfCapturableCell = list()
 		name = self.piece.name
+
+		def rookMoves(forRange, counter, direction): #append Cells that are Legal for Rook
+			for i in range(forRange):
+				if direction == "v" or direction == "V": #vertical			
+					listOfLegalMoves.append(currentBoardState.board[counter][self.loc[1]])
+					if currentBoardState.board[counter][self.loc[1]].isOccupied == 1:
+						break
+				if direction == "h" or direction == "H": #horizontal				
+					listOfLegalMoves.append(currentBoardState.board[self.loc[0]][counter])
+					if currentBoardState.board[self.loc[0]][counter].isOccupied == 1:
+						break
+
 
 		if name == "king":
 			listOfLegalMoves = list(
@@ -60,6 +75,7 @@ class Cell:
 				)
 			)
 
+
 		elif name == "knight":
 			delta = ["1","2"]
 			operator = ["+", "-"]
@@ -71,16 +87,27 @@ class Cell:
 							eval(f"{self.loc[0]} {operator[k]} {delta[i]}"),
 							eval(f"{self.loc[1]} {operator[j]} {delta[i_]}")]
 						if (1 <= pairLoc[0] <= 8) and (1 <= pairLoc[1] <= 8):
-							listOfLegalMoves.append(pair)
+							listOfLegalMoves.append(pairLoc)
+
 
 		elif name == "rook":
-			pass
+			rookMoves(8 - self.loc[0], self.loc[0] + i, "v") #Up
+			rookMoves(	  self.loc[0], self.loc[0] - i, "v") #Down
+			rookMoves(8 - self.loc[1], self.loc[1] + i, "h") #Right
+			rookMoves(	  self.loc[1], self.loc[1] - i, "h") #Left
+					
+
 		elif name == "bishop":
 			pass
+
+
 		elif name == "queen":
 			pass
+
+
 		elif name == "pawn":
 			pass
+
 
 		listOfPossibleMoves = list()
 		for cellLoc in listOfLegalMoves:
@@ -88,9 +115,12 @@ class Cell:
 				continue
 
 			possibleCell = currentBoardState.board[cellLoc[0] - 1][cellLoc[1] - 1]
-			if not possibleCell.isOccupied:
-				listOfPossibleMoves.append(possibleCell)
-			elif possibleCell.piece.isBlack != self.piece.isBlack:
-				listOfPossibleMoves.append(possibleCell)
+
+			listOfPossibleMoves.append(possibleCell)
+
+			# if not possibleCell.isOccupied:
+			# 	listOfPossibleMoves.append(possibleCell)
+			# elif possibleCell.piece.isBlack != self.piece.isBlack:
+			# 	listOfPossibleMoves.append(possibleCell)
 
 		return listOfPossibleMoves

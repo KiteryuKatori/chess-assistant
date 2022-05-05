@@ -8,13 +8,13 @@ class Cell:
 		# 	- loc: list of 2 integers 
 		# 		tells the location of the cells
 
-		self.loc 				= loc
+		self.loc 				= loc		#[row, collumn]
 		self.isOccupied			= False
 		self.isTransformable 	= False
-		self.Score 				= 0 		# transformable = 100, 
+		self.Score 				= 0 		# transformable = 100, stepToTransformable = ? -> self.Score -= stepToTransformable * aNumber
 		self.isAvailable		= False
 		self.isBlack			= ((loc[0] + loc[1]) % 2) == 0
-		self.piece				= None # chess piece objects
+		self.piece				= None 		# chess piece objects
 	
 	def setPiece(self, Piece):
 		self.isOccupied = True
@@ -49,17 +49,6 @@ class Cell:
 		listOfCapturableCell = list()
 		name = self.piece.name
 
-		def rookMoves(forRange, counter, direction): #append Cells that are Legal for Rook
-			for i in range(forRange):
-				if direction == "v" or direction == "V": #vertical			
-					listOfLegalMoves.append(currentBoardState.board[counter][self.loc[1]])
-					if currentBoardState.board[counter][self.loc[1]].isOccupied == 1:
-						break
-				if direction == "h" or direction == "H": #horizontal				
-					listOfLegalMoves.append(currentBoardState.board[self.loc[0]][counter])
-					if currentBoardState.board[self.loc[0]][counter].isOccupied == 1:
-						break
-
 
 		if name == "king":
 			listOfLegalMoves = list(
@@ -89,38 +78,95 @@ class Cell:
 						if (1 <= pairLoc[0] <= 8) and (1 <= pairLoc[1] <= 8):
 							listOfLegalMoves.append(pairLoc)
 
-
-		elif name == "rook":
-			rookMoves(8 - self.loc[0], self.loc[0] + i, "v") #Up
-			rookMoves(	  self.loc[0], self.loc[0] - i, "v") #Down
-			rookMoves(8 - self.loc[1], self.loc[1] + i, "h") #Right
-			rookMoves(	  self.loc[1], self.loc[1] - i, "h") #Left
-					
-
-		elif name == "bishop":
-			pass
-
-
-		elif name == "queen":
-			pass
-
-
 		elif name == "pawn":
 			pass
 
+		else:
+			#remove excess space + time defining the same functions
+			orgRow = self.loc[0] - 1 #original Row Index
+			orgCollumn = self.loc[1] - 1 #original Collumn Index
 
-		listOfPossibleMoves = list()
-		for cellLoc in listOfLegalMoves:
-			if cellLoc == self.loc:
-				continue
 
-			possibleCell = currentBoardState.board[cellLoc[0] - 1][cellLoc[1] - 1]
+			def rookMoves(): #append Cells that are Legal for Rook (Tried to make a function but no use -> hardcode instead)
+				#toUp
+				for i in range(8 - orgRow - 1): #subtract 1 from the loop range to ensure everything is in the board
+					listOfLegalMoves.append(currentBoardState.board[orgRow + i + 1][orgCollumn].loc) #exclude it's own loc (loop start from 0 so we have to + 1)
+					if currentBoardState.board[orgRow + i + 1][orgCollumn].isOccupied: #End the loop when the last Cell is occupied(still take it's loc)
+						break
+				
+				# listOfLegalMoves.append([99, 99])
 
-			listOfPossibleMoves.append(possibleCell)
+				#toDown
+				for i in range(orgRow): #skip self.loc[0] by adding "-1"
+					listOfLegalMoves.append(currentBoardState.board[orgRow - i - 1][orgCollumn].loc)
+					if currentBoardState.board[orgRow - i - 1][orgCollumn].isOccupied:
+						break
 
-			# if not possibleCell.isOccupied:
-			# 	listOfPossibleMoves.append(possibleCell)
-			# elif possibleCell.piece.isBlack != self.piece.isBlack:
-			# 	listOfPossibleMoves.append(possibleCell)
+				#toRight
+				for i in range(8 - orgCollumn - 1):
+					listOfLegalMoves.append(currentBoardState.board[orgRow][orgCollumn + i + 1].loc)
+					if currentBoardState.board[orgRow][orgCollumn + i + 1].isOccupied:
+						break
 
-		return listOfPossibleMoves
+				#toLeft
+				for i in range(orgCollumn):
+					listOfLegalMoves.append(currentBoardState.board[orgRow][orgCollumn - i - 1].loc)
+					if currentBoardState.board[orgRow][orgCollumn - i - 1].isOccupied:
+						break
+
+			
+			# def bishopMoves():
+			# 	#toUpperRight
+			# 	for i in range(8 - orgRow - 1): #subtract 1 from the loop range to ensure everything is in the board
+			# 		listOfLegalMoves.append(currentBoardState.board[orgRow + i + 1][orgCollumn + i + 1].loc)
+			# 		if currentBoardState.board[orgRow + i + 1][orgCollumn + i + 1].isOccupied:
+			# 			break
+
+			# 	#toUpperLeft
+			# 	for i in range(orgRow):
+			# 		listOfLegalMoves.append(currentBoardState.board[orgRow - i - 1][orgCollumn].loc)
+			# 		if currentBoardState.board[orgRow - i - 1][orgCollumn].isOccupied:
+			# 			break
+
+			# 	#toLowerRight
+			# 	for i in range(8 - orgCollumn - 1):
+			# 		listOfLegalMoves.append(currentBoardState.board[orgRow][orgCollumn + i + 1].loc)
+			# 		if currentBoardState.board[orgRow][orgCollumn + i + 1].isOccupied:
+			# 			break
+
+			# 	#toLowerLeft
+			# 	for i in range(orgCollumn):
+			# 		listOfLegalMoves.append(currentBoardState.board[orgRow][orgCollumn - i - 1].loc)
+			# 		if currentBoardState.board[orgRow][orgCollumn - i - 1].isOccupied:
+			# 			break
+
+
+			if name == "rook":
+				rookMoves()
+
+			elif name == "bishop":
+				bishopMoves()
+
+			elif name == "queen":
+				rookMoves()
+				bishopMoves()
+
+
+
+		# listOfPossibleMoves = list()
+		# for cellLoc in listOfLegalMoves:
+		# 	if cellLoc == self.loc:
+		# 		continue
+
+		# 	possibleCell = currentBoardState.board[cellLoc[0] - 1][cellLoc[1] - 1]
+			
+		# 	listOfPossibleMoves.append(possibleCell)
+
+		# 	if not possibleCell.isOccupied:
+		# 			listOfPossibleMoves.append(possibleCell)
+		# 	elif possibleCell.piece.isBlack != self.piece.isBlack:
+		# 			listOfPossibleMoves.append(possibleCell)
+
+
+		# return listOfPossibleMoves
+		return listOfLegalMoves

@@ -115,30 +115,55 @@ class Cell:
 						break
 
 			
-			# def bishopMoves():
-			# 	#toUpperRight
-			# 	for i in range(8 - orgRow - 1): #subtract 1 from the loop range to ensure everything is in the board
-			# 		listOfLegalMoves.append(currentBoardState.board[orgRow + i + 1][orgCollumn + i + 1].loc)
-			# 		if currentBoardState.board[orgRow + i + 1][orgCollumn + i + 1].isOccupied:
-			# 			break
+			def bishopMoves():
+				tempRow = orgRow
+				tempCol = orgCollumn
 
-			# 	#toUpperLeft
-			# 	for i in range(orgRow):
-			# 		listOfLegalMoves.append(currentBoardState.board[orgRow - i - 1][orgCollumn].loc)
-			# 		if currentBoardState.board[orgRow - i - 1][orgCollumn].isOccupied:
-			# 			break
+				# toUpperRight
+				while tempRow < 8 and tempCol < 8:
+					tempCol += 1
+					tempRow += 1
+					if tempRow == 8 or tempCol == 8 or tempRow == -1 or tempCol == -1:
+						break
+					listOfLegalMoves.append(currentBoardState.board[tempRow][tempCol].loc)
+					if currentBoardState.board[tempRow][tempCol].isOccupied:
+						break
 
-			# 	#toLowerRight
-			# 	for i in range(8 - orgCollumn - 1):
-			# 		listOfLegalMoves.append(currentBoardState.board[orgRow][orgCollumn + i + 1].loc)
-			# 		if currentBoardState.board[orgRow][orgCollumn + i + 1].isOccupied:
-			# 			break
+				#toUpperLeft
+				tempRow = orgRow
+				tempCol = orgCollumn
+				while tempRow > -1 and tempCol < 8:
+					tempCol -= 1
+					tempRow += 1
+					if tempRow == 8 or tempCol == 8 or tempRow == -1 or tempCol == -1:
+						break
+					listOfLegalMoves.append(currentBoardState.board[tempRow][tempCol].loc)
+					if currentBoardState.board[tempRow][tempCol].isOccupied:
+						break
 
-			# 	#toLowerLeft
-			# 	for i in range(orgCollumn):
-			# 		listOfLegalMoves.append(currentBoardState.board[orgRow][orgCollumn - i - 1].loc)
-			# 		if currentBoardState.board[orgRow][orgCollumn - i - 1].isOccupied:
-			# 			break
+				#toLowerRight
+				tempRow = orgRow
+				tempCol = orgCollumn
+				while tempRow < 8 and tempCol > -1:
+					tempCol += 1
+					tempRow -= 1
+					if tempRow == 8 or tempCol == 8 or tempRow == -1 or tempCol == -1:
+						break
+					listOfLegalMoves.append(currentBoardState.board[tempRow][tempCol].loc)
+					if currentBoardState.board[tempRow][tempCol].isOccupied:
+						break
+
+				#toLowerLeft
+				tempRow = orgRow
+				tempCol = orgCollumn
+				while tempRow > -1 and tempCol > -1:
+					tempCol -= 1
+					tempRow -= 1
+					if tempRow == 8 or tempCol == 8 or tempRow == -1 or tempCol == -1:
+						break
+					listOfLegalMoves.append(currentBoardState.board[tempRow][tempCol].loc)
+					if currentBoardState.board[tempRow][tempCol].isOccupied:
+						break
 
 
 			if name == "rook":

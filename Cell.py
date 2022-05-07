@@ -21,7 +21,7 @@ class Cell:
 		self.piece = Piece
     
     
-  def removePiece(self):
+    def removePiece(self):
 		self.isOccupied = True
 		self.piece = None
 

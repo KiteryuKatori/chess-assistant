@@ -92,9 +92,9 @@ class Cell:
 			# At starting position, pawn can take two steps forward.
 			legalStep = 1 if pawn.hasTakenFirstMove else 2
 	
-			if pawn.isBlack:
+			if not pawn.isBlack:
 				# I. MOVE
-				# Black pawn moves from row 2 (of index 1), towards row 8 (of index 7),
+				# White pawn moves from row 2 (of index 1), towards row 8 (of index 7),
 				# The row increases while the column stays the same
 				# When the Cell ahead is occupied, pawn cannot travel.
 				for step in range(1, legalStep + 1):
@@ -103,22 +103,22 @@ class Cell:
 					listOfLegalMoves.append([orgRow + step, orgCol]) 
 
 				# II. ATTACK
-				# Black pawn can attack diagonally,
+				# White pawn can attack diagonally,
 				# if the diagonal Cell contains a Piece of opposite color
 				cellDiagnonalUpRight: Cell = currentBoardState[orgRow + 1][orgCol + 1]
 				cellDiagnonalUpLeft: Cell = currentBoardState[orgRow + 1][orgCol - 1]
     
 				if cellDiagnonalUpRight.isOccupied  \
-    				and not cellDiagnonalUpRight.piece.isBlack :
+    				and cellDiagnonalUpRight.piece.isBlack :
 					listOfLegalMoves.append([orgRow + 1, orgCol + 1])
 	
 				elif cellDiagnonalUpLeft.isOccupied \
-        			and not cellDiagnonalUpLeft.piece.isBlack:
+        			and cellDiagnonalUpLeft.piece.isBlack:
 					listOfLegalMoves.append([orgRow + 1, orgCol - 1])
      
 			else:
 				# I. MOVE
-				# White pawn moves from row 8 (of index 7), towards row 1 (of index 0),
+				# Black pawn moves from row 8 (of index 7), towards row 1 (of index 0),
 				# The row decreases while the column stays the same
 				# When the Cell ahead is occupied, pawn cannot travel.
 				for step in range(legalStep, 0, -1):
@@ -131,11 +131,11 @@ class Cell:
 				cellDiagnonalDownLeft: Cell = currentBoardState[orgRow + 1][orgCol - 1]
     
 				if cellDiagnonalDownRight.isOccupied \
-    				and cellDiagnonalDownRight.piece.isBlack :
+    				and not cellDiagnonalDownRight.piece.isBlack :
 					listOfLegalMoves.append([orgRow - 1, orgCol + 1])
 	
 				elif cellDiagnonalDownLeft.isOccupied \
-        			and cellDiagnonalDownLeft.piece.isBlack:
+        			and not cellDiagnonalDownLeft.piece.isBlack:
 					listOfLegalMoves.append([orgRow - 1, orgCol - 1])
 				
 			# WAITING "EN PASSE" situation

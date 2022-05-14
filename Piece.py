@@ -31,7 +31,10 @@ class Piece:
 		# Raise KeyError if `name` not in `imageDatabase`
 		self.image = Piece.imageDatabase[self.name][self.isBlack] # ♔ ♚ ♕ ♛ ♗ ♝ ♘ ♞ ♙ ♟ ♖ ♜
 		self.isAlive = True
-		self.firstMoveTaken = False
+		# self.firstMoveTaken = False
+  
+		if self.name == "pawn" or self.name == "king":
+			self.hasTakenFirstMove = False
   
 	def getImage(self):
 		return self.image

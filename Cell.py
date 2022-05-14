@@ -1,5 +1,10 @@
 # Cell.py
 
+
+from Piece import Piece
+from Board import Board
+
+
 class Cell:
 	def __init__(self, loc):
 		# Parameters:
@@ -25,7 +30,7 @@ class Cell:
 		self.piece = None
 
 
-	def showPossibleMoves(self, currentBoardState):
+	def showPossibleMoves(self, currentBoardState: Board) -> list:
 
 		"""
 		Parameters:
@@ -72,52 +77,98 @@ class Cell:
 					for k in range(len(operator)):
 						pairLoc = [
 							eval(f"{self.loc[0]} {operator[k]} {delta[i]}"),
-							eval(f"{self.loc[1]} {operator[j]} {delta[i_]}")]
+							eval(f"{self.loc[1]} {operator[j]} {delta[i_]}")
+       					]
 						if (1 <= pairLoc[0] <= 8) and (1 <= pairLoc[1] <= 8):
 							listOfLegalMoves.append(pairLoc)
 
 
 
 		elif name == "pawn":
-			pass
+			
+			pawn: Piece = self.piece
+			orgRow = self.loc[0] - 1 # index of current row
+			orgCol = self.loc[1] + 1 # index of current column
+
+			if pawn.isBlack:
+				# Black pawn moves from row 2 (of index 1), towards row 8 (of index 7),
+				# movement is vertically upward the board.
+				# At starting position, it can take two moves forward.
+				legalRow = orgRow + 1; legalCol = orgCol 
+				if not pawn.hasTakenFirstMove:
+					legalRow += 1
+				legalPair = [legalRow, legalCol]
+				# Black pawn can move/attack upward diagonally,
+				# if the diagonal Cell contains a Piece of opposite color
+				cellDiagnonalUpRight: Cell = currentBoardState[orgRow + 1][orgCol + 1]
+				cellDiagnonalUpLeft: Cell = currentBoardState[orgRow+ 1][orgCol - 1]
+    
+				if cellDiagnonalUpRight.isOccupied()  \
+    				and not cellDiagnonalUpRight.piece.isBlack() :
+					legalPair = [orgRow + 1, orgCol + 1]
+     
+				elif cellDiagnonalUpLeft.isOccupied() \
+        			and cellDiagnonalUpLeft.piece.isBlack():
+					legalPair = [orgRow + 1, orgCol - 1]
+     
+			else:
+				# white pawn only moves upwards the board
+				legalRow = orgRow - 1; legalCol = orgCol 
+				if not pawn.hasTakenFirstMove:
+					legalRow -= 1
+			
+			# pawn only moves by column, so its movement follows:
+			# [eval(f"currentRow + | - 1")], currentCol]
+			# with "+" for black moves downward, and "-" for white moves upwards the board.
+			# if the tile ahead is occupied, it's not a valid move
+   
+			# if the pawn is at starting position: row 2 for black and 3 for white,
+			# pawn can move forward by two columns. 
+   
+			# pawn can also move diagonally, if the diagonal cell contains a piece of opposite color. 
+			# [currentRow + 1, currentCol + 1] # diagonal top - right, only legal for white piece
+			# [currentRow + 1, currentCol - 1] # diagonal top - left
+			# [currentRow - 1, currentCol + 1] # diagonal down - right, only legal for black piece
+			# [currentRow - 1, currentCol - 1] # diagonal down - left, 
+
 
 		else:
 			#remove excess space + time defining the same functions
 			orgRow = self.loc[0] - 1 #original Row Index
-			orgCollumn = self.loc[1] - 1 #original Collumn Index
+			orgColumn = self.loc[1] - 1 #original Collumn Index
 
 
 			def rookMoves(): #append Cells that are Legal for Rook (Tried to make a function but no use -> hardcode instead)
 				#toUp
 				for i in range(8 - orgRow - 1): #subtract 1 from the loop range to ensure everything is in the board
-					listOfLegalMoves.append(currentBoardState.board[orgRow + i + 1][orgCollumn].loc) #exclude it's own loc (loop start from 0 so we have to + 1)
-					if currentBoardState.board[orgRow + i + 1][orgCollumn].isOccupied: #End the loop when the last Cell is occupied(still take it's loc)
+					listOfLegalMoves.append(currentBoardState.board[orgRow + i + 1][orgColumn].loc) #exclude it's own loc (loop start from 0 so we have to + 1)
+					if currentBoardState.board[orgRow + i + 1][orgColumn].isOccupied: #End the loop when the last Cell is occupied(still take it's loc)
 						break
 				
 				# listOfLegalMoves.append([99, 99])
 
 				#toDown
 				for i in range(orgRow): #skip self.loc[0] by adding "-1"
-					listOfLegalMoves.append(currentBoardState.board[orgRow - i - 1][orgCollumn].loc)
-					if currentBoardState.board[orgRow - i - 1][orgCollumn].isOccupied:
+					listOfLegalMoves.append(currentBoardState.board[orgRow - i - 1][orgColumn].loc)
+					if currentBoardState.board[orgRow - i - 1][orgColumn].isOccupied:
 						break
 
 				#toRight
-				for i in range(8 - orgCollumn - 1):
-					listOfLegalMoves.append(currentBoardState.board[orgRow][orgCollumn + i + 1].loc)
-					if currentBoardState.board[orgRow][orgCollumn + i + 1].isOccupied:
+				for i in range(8 - orgColumn - 1):
+					listOfLegalMoves.append(currentBoardState.board[orgRow][orgColumn + i + 1].loc)
+					if currentBoardState.board[orgRow][orgColumn + i + 1].isOccupied:
 						break
 
 				#toLeft
-				for i in range(orgCollumn):
-					listOfLegalMoves.append(currentBoardState.board[orgRow][orgCollumn - i - 1].loc)
-					if currentBoardState.board[orgRow][orgCollumn - i - 1].isOccupied:
+				for i in range(orgColumn):
+					listOfLegalMoves.append(currentBoardState.board[orgRow][orgColumn - i - 1].loc)
+					if currentBoardState.board[orgRow][orgColumn - i - 1].isOccupied:
 						break
 
 			
 			def bishopMoves():
 				tempRow = orgRow
-				tempCol = orgCollumn
+				tempCol = orgColumn
 
 				# toUpperRight
 				while tempRow < 8 and tempCol < 8:
@@ -131,7 +182,7 @@ class Cell:
 
 				#toUpperLeft
 				tempRow = orgRow
-				tempCol = orgCollumn
+				tempCol = orgColumn
 				while tempRow > -1 and tempCol < 8:
 					tempCol -= 1
 					tempRow += 1
@@ -143,7 +194,7 @@ class Cell:
 
 				#toLowerRight
 				tempRow = orgRow
-				tempCol = orgCollumn
+				tempCol = orgColumn
 				while tempRow < 8 and tempCol > -1:
 					tempCol += 1
 					tempRow -= 1
@@ -155,7 +206,7 @@ class Cell:
 
 				#toLowerLeft
 				tempRow = orgRow
-				tempCol = orgCollumn
+				tempCol = orgColumn
 				while tempRow > -1 and tempCol > -1:
 					tempCol -= 1
 					tempRow -= 1

@@ -18,10 +18,10 @@ class Cell:
 	def setPiece(self, Piece):
 		self.isOccupied = True
 		self.piece = Piece
-
+		self.piece.firstMoveTaken = True
 
 	def removePiece(self):
-		self.isOccupied = True
+		self.isOccupied = False
 		self.piece = None
 
 
@@ -61,7 +61,22 @@ class Cell:
 					]
 				)
 			)
+			# check if the King is moved or not
+			if self.piece.firstMoveTaken == False:
+				row = self.loc[0]
+				col = self.loc[1]
+				leftCornerCell = currentBoardState.board[row-1][0]
+				rightCornerCell = currentBoardState.board[row-1][7]
 
+				if ((leftCornerCell.isOccupied) and
+					(leftCornerCell.piece.name == "rook") and
+					(leftCornerCell.piece.firstMoveTaken == False)):
+					listOfLegalMoves.append([row, col - 2])					
+
+				if ((rightCornerCell.isOccupied) and
+					(rightCornerCell.piece.name == "rook") and
+					(rightCornerCell.piece.firstMoveTaken == False)):
+					listOfLegalMoves.append([row, col + 2])
 
 		elif name == "knight":
 			delta = ["1","2"]

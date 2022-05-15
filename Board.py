@@ -1,14 +1,18 @@
 # Board.py
-from Cell import *
-from Piece import *
+from Cell import Cell
+from Piece import Piece
+
 class Board:
+	BOARD_SIDE = 8
+    
 	def __init__(self):
 		print("Hello from Board class")
 
 		self.board = list()
-		for x in range(8):
+		for x in range(Board.BOARD_SIDE):
 			row = list()
-			for y in range(8):
+			for y in range(Board.BOARD_SIDE):
+				# NOTE: Cell loc is the index+1, so reflect on our past codes to see if we use the location/index appropriately
 				row.append(Cell([x + 1, y + 1]))
 
 			self.board.append(row)
@@ -50,6 +54,62 @@ class Board:
 	def getBoard(self):
 		return self.board
 
+	def visualize(self) -> None:
+		"""
+		   0    1    2    3   4    5   6    7
+		  --- --- --- --- --- --- --- --- --- --
+		0| ♜ | ♞ | ♝ | ♛ | ♚ | ♝ | ♞ | ♜ |
+		  --- --- --- --- --- --- --- --- --- --
+		1| ♟ | ♟ | ♟ | ♟ | ♟ | ♟ | ♟ | ♟ |
+		  --- --- --- --- --- --- --- --- --- --
+		2|    |   |    |    |    |   |    |    |
+		  --- --- --- --- --- --- --- --- --- --
+		3|    |   |    |    |    |   |    |    |
+		  --- --- --- --- --- --- --- --- --- --
+		4|    |   |    |    |    |   |    |    |
+		  --- --- --- --- --- --- --- --- --- --
+		5|    |   |    |    |    |   |    |    |
+		  --- --- --- --- --- --- --- --- --- --
+		6| ♙ | ♙ | ♙ | ♙ | ♙ | ♙ | ♙ | ♙ |
+	  	  --- --- --- --- --- --- --- --- --- --
+		7| ♖ | ♘ | ♗ | ♔ | ♕ | ♗ | ♘ | ♖ |
+	  	  --- --- --- --- --- --- --- --- --- --
+		"""
+		boardToVisualize = []
+  
+		for row in self.board:
+			rowVisualized = []
+			for cell in row:
+				piece = cell.piece
+				if isinstance(piece, Piece):
+					rowVisualized.append(piece.getImage())
+				else:
+					rowVisualized.append('')
+			boardToVisualize.append(rowVisualized)
+		
+		def printBoardWPiece(currentBoardState: list) -> None:
+			"""Print the Board with Piece image, row divison '---', index for rows and columns
 
-	def visualize(self):
-		pass
+			Args:
+				currentBoardState (list): current state of the board array
+			"""
+			print('   ' + '   '.join([str(colNumber) for colNumber in range(Board.BOARD_SIDE)]) )
+			rowNumber = 0
+			for row in currentBoardState:
+				print(' ' + ' ---' * Board.BOARD_SIDE) 
+				print(str(rowNumber) + '', end='')
+				for piece in row:
+					if piece == '':
+						print('|   ', end='')
+					else:
+						print(f'| {piece} ', end='')
+				print('|')
+				rowNumber += 1
+			print('  ' + ' ---' * Board.BOARD_SIDE) 
+			
+		printBoardWPiece(boardToVisualize)
+	
+	
+  
+board_init = Board()
+board_init.visualize()

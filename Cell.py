@@ -1,7 +1,6 @@
 # Cell.py
-from tkinter import *
+from tkinter import Button
 import tkinter.font as font
-from Board import Board
 
 class Cell:
     YELLOW = "yellow"   # selected
@@ -40,6 +39,7 @@ class Cell:
         self.button.configure(bg=self.color)
 
     def click(self):
+        from Board import Board
 
         if Board.isSelected == True and self.color not in (self.YELLOW, self.GREEN, self.PURPLE, self.RED):
             return

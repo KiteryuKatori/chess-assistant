@@ -1,6 +1,7 @@
 # Board.py
 from Piece import *
-
+from Cell import Cell
+from tkinter import *
 from tkinter import ttk
 
 class Board:

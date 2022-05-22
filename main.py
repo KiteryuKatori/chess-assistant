@@ -5,5 +5,6 @@ from Cell import *
 from Piece import *
 
 # board = Board()
-cell  = Cell((5, 6))
-Piece = Piece("king", True)
+if __name__ == "__main__":
+	board = Board()
+	board.visualize()

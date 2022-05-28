@@ -66,9 +66,28 @@ class Board:
             for cell in row:
                 cell.resetColor()
 
+    def updateBoard(self):
+        pass
     def getBoard(self):
         return self.board
 
     def visualize(self):
         self.mainPanel.mainloop()
         pass
+
+    def printBoardWPieceTerminal(self) -> None:
+        BOARD_SIDE= range(8)
+        print('   ' + '   '.join([str(col_num) for col_num in BOARD_SIDE]) )
+        row_num = 0
+        for row in self.board:
+            print(' ' + ' ---' * 8) 
+            print(str(row_num) + '', end='')
+            for cell in row:
+                if cell.isOccupied == False:
+                    print('|   ', end='')
+                else:
+                    print(f'| {cell.piece.getImage()} ', end='')
+            print('|')
+            row_num += 1
+        print('  ' + ' ---' * 8) 
+        print()

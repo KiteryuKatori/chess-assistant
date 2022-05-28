@@ -72,6 +72,8 @@ class Cell:
 			self.boardState.currentSelectedPiece = None
 			self.boardState.currentSelectedCell.clear()
 
+			self.boardState.printBoardWPieceTerminal()
+
 	def clear(self):
 		self.resetColor()
 		self.button['text'] = ""

@@ -95,7 +95,7 @@ board[6][5] = Piece("pawn",   False)
 board[6][6] = Piece("pawn",   False)
 board[6][7] = Piece("pawn",   False)
 
-board_update = []
+boardVisualized = []
 
 for row in board:
     row_visualized = []
@@ -105,8 +105,12 @@ for row in board:
         else:
             row_visualized.append('')
     
-    board_update.append(row_visualized)
+    boardVisualized.append(row_visualized)
 
-# printBoard()
-# print()
-printBoardWPiece(board_update)
+# for row in board_update:
+#     for piece in row:
+#         if piece == '': piece = '*'
+#         print(piece, end = ' ')
+#     print()    
+    
+printBoardWPiece(boardVisualized)

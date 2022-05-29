@@ -6,7 +6,6 @@ from tkinter import *
 from tkinter import ttk
 
 class Board:
-
     mainPanel = Tk()
     frm = ttk.Frame(mainPanel)
     frm.grid()

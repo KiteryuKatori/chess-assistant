@@ -29,18 +29,19 @@ class Cell:
 		self.color  = self.getDefaultColor()
 		self.text   = piece.getImage() if self.piece != None else ""
 
-		self.button = Button(self.boardState.frm, text=self.text,
-							 height=0, width=3,
-							 command=self.click,
-							 padx=size[0], pady=size[1]
-							 ,compound="c")
-		self.button["font"] = font.Font(size=36)
-		self.button.config(bg=self.color)
-		self.button.grid(column=loc[1], row=loc[0])
+		#Rendering Cell for Tkinter
+		self.button = Button(self.boardState.frm, text = self.text,
+							 height = 0, width = 3,
+							 command = self.click,
+							 padx = size[0], pady = size[1]
+							 ,compound = "c")
+		self.button["font"] = font.Font(size = 36)
+		self.button.config(bg = self.color)
+		self.button.grid(column = loc[1], row = loc[0])
 
 	def setColor(self, color):
 		self.color = color
-		self.button.configure(bg=self.color)
+		self.button.configure(bg = self.color)
 
 	def click(self):
 		from Board import Board
@@ -73,11 +74,12 @@ class Cell:
 			Board.isSelected = False
 			Board.currentSelectedPiece = None
 			Board.currentSelectedCell.clear()
+
 	def clear(self):
 		self.resetColor()
 		self.button['text'] = ""
 
-	def setPiece(self, piece, firstMoveTaken=True):
+	def setPiece(self, piece, firstMoveTaken = True):
 		self.button["text"] = (piece.getImage())
 		self.isOccupied = True
 		self.piece = piece
@@ -92,7 +94,7 @@ class Cell:
 
 	def resetColor(self):
 		self.color = self.getDefaultColor()
-		self.button.configure(bg=self.color)
+		self.button.configure(bg = self.color)
 
 	def showPossibleMoves(self, currentBoardState):
 

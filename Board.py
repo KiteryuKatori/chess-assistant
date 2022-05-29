@@ -36,9 +36,9 @@ class Board:
             self.board[7][i].setPiece(Piece(pieceList[i], False), False)
             self.board[7][7-i].setPiece(Piece(pieceList[i], False), False)
 
-        for i in range(8):
-            self.board[1][i].setPiece(Piece(pieceList[3], True), False)
-            self.board[6][7-i].setPiece(Piece(pieceList[3], False), False) 
+        # for i in range(8):
+        #     self.board[1][i].setPiece(Piece(pieceList[3], True), False)
+        #     self.board[6][7-i].setPiece(Piece(pieceList[3], False), False) 
 
 
     def resetBoardColor(self):

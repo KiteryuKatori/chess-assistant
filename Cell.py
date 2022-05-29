@@ -33,9 +33,10 @@ class Cell:
 		self.button = Button(self.boardState.frm, text = self.text,
 							 height = 0, width = 3,
 							 command = self.click,
-							 padx = size[0], pady = size[1]
-							 ,compound = "c")
-		self.button["font"] = font.Font(size = 36)
+							 padx = size[0], pady = size[1],
+							 compound = "c")
+							 
+		self.button["font"] = font.Font(size = 24)
 		self.button.config(bg = self.color)
 		self.button.grid(column = loc[1], row = loc[0])
 
@@ -59,11 +60,21 @@ class Cell:
 			Board.currentSelectedPiece = self.piece
 			Board.currentSelectedCell  = self
 			self.setColor(self.YELLOW)
-			self.removePiece()
-
+			# print(self.piece.name, "is selected")
+			self.removePiece() 
+			# removePiece() to prevent invisible pieces 
+			# but also may be the cause of firstMoveTaken 
+			# being set to True
+			
 		elif self.color == self.YELLOW:
 			self.boardState.resetBoardColor()
-			self.setPiece(Board.currentSelectedPiece)
+
+			if (not self.piece.firstMoveTaken): #if not 1stMoveTaken -> act as putting back that piece
+				self.setPiece(Board.currentSelectedPiece, False)
+
+			if (self.piece.firstMoveTaken):
+				self.setPiece(Board.currentSelectedPiece) #to prevent 1stMoveTaken being set to False
+			
 			Board.isSelected = False
 			Board.currentSelectedPiece = None            
 
@@ -225,7 +236,7 @@ class Cell:
 
 
 		else:
-			#remove excess space + time defining the same functions
+			#remove excess space + time defining the same functions for each cell selected
 			orgRow = self.loc[0] - 1 #original Row Index
 			orgCollumn = self.loc[1] - 1 #original Collumn Index
 

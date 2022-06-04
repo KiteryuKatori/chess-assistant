@@ -3,20 +3,71 @@ from Piece import *
 from Cell import Cell
 from tkinter import *
 from tkinter import ttk
+import copy
+import random
 
-class Board:
+class BoardAI:
+    historyBoards = list()
+
+    def __init__(self):
+        
+        self.board = list()
+        self.isBlackTurn = None
+
+    def updateHistory(self):
+        self.historyBoards.append(self)
+
+    def printBoardWPieceTerminal(self) -> None:
+
+        BOARD_SIDE = range(8)
+        print('   ' + '   '.join([str(col_num) for col_num in BOARD_SIDE]) )
+        row_num = 0
+        for row in self.board:
+            print(' ' + ' ---' * 8) 
+            print(str(row_num) + '', end='')
+            for cell in row:
+                if cell.isOccupied == False:
+                    print('|   ', end='')
+                else:
+                    print(f'| {cell.piece.getImage()} ', end='')
+            print('|')
+            row_num += 1
+        print('  ' + ' ---' * 8) 
+        print()
+
+    def moveAI(self, oldLoc, newLoc):
+        oldCell = self.board[oldLoc[0]][oldLoc[1]]
+        newCell = self.board[newLoc[0]][newLoc[1]]
+
+        newCell.setPiece(oldCell.piece)
+        oldCell.removePiece()
+
+    def getScore(self):
+        totalScoreWhite = 0
+        totalScoreBlack = 0
+
+        for row in self.board:
+            for cell in row:
+                if not cell.isOccupied:
+                    continue
+                if cell.piece.isBlack:
+                    totalScoreBlack += cell.piece.SCORE
+                else:
+                    totalScoreWhite += cell.piece.SCORE
+
+        return (totalScoreBlack - totalScoreWhite) / totalScoreBlack
+class Board(BoardAI):
 
     mainPanel = Tk()
-
-
 
     def __init__(self):
         self.frm = ttk.Frame(self.mainPanel)
         self.frm.grid()
         self.board = list()
         self.isSelected = False
-        self.currentSelectedCell  = None
+        self.previousSelectedCell  = None
         self.currentSelectedPiece = None
+        self.isBlackTurn = False
         
         for x in range(8):
             row = list()
@@ -66,8 +117,13 @@ class Board:
             for cell in row:
                 cell.resetColor()
 
-    def updateBoard(self):
-        pass
+    def resetEnPasse(self):
+        boardCell = self.board
+        for row in  boardCell:
+            for cell in row:
+                if cell.isOccupied:
+                    cell.piece.isEdibleEnPasse = False
+
     def getBoard(self):
         return self.board
 
@@ -75,8 +131,23 @@ class Board:
         self.mainPanel.mainloop()
         pass
 
+    def moveGUI(self, oldLoc, newLoc):
+
+        oldCell = self.board[oldLoc[0]][oldLoc[1]]
+        newCell = self.board[newLoc[0]][newLoc[1]]
+        
+        oldCell.click()
+        newCell.click()
+
+    def saveState(self):
+
+        newBoardState = self.copy()
+        newBoardState.updateHistory()
+
     def printBoardWPieceTerminal(self) -> None:
-        BOARD_SIDE= range(8)
+
+        
+        BOARD_SIDE = range(8)
         print('   ' + '   '.join([str(col_num) for col_num in BOARD_SIDE]) )
         row_num = 0
         for row in self.board:
@@ -91,3 +162,43 @@ class Board:
             row_num += 1
         print('  ' + ' ---' * 8) 
         print()
+
+    def copy(self):
+        """
+        return: BoardAI Object
+        """
+        boardAI = BoardAI()
+        boardAI.isBlackTurn = self.isBlackTurn
+        for row in self.board:
+            newRow = list()
+            for cell in row:
+                newRow.append(cell.copy())
+            boardAI.board.append(newRow)
+
+        return boardAI
+
+    def MakesRanDomMove(self, currState):
+
+        rawBoardState = currState.copy()
+
+        listOfInputForMoves = []
+        for i, row in enumerate(rawBoardState.board):
+            for j, cell in enumerate(row):
+                if (cell.isOccupied) and \
+                   (cell.piece.isBlack == True):
+                    oldLoc = [i, j]
+                    listOfMoveableCell = cell.showPossibleMoves(rawBoardState)
+                    for newCell in listOfMoveableCell:
+                        newLoc = [newCell.loc[0] - 1 , newCell.loc[1] - 1]
+                        listOfInputForMoves.append([oldLoc, newLoc])
+
+        successor = list()
+        for eachSuggestion in listOfInputForMoves:
+            copiedVersion = copy.deepcopy(rawBoardState)
+            copiedVersion.moveAI(eachSuggestion[0], eachSuggestion[1])
+            
+            successor.append([eachSuggestion, copiedVersion.getScore()])
+
+        successor.sort(key = lambda x: x[1], reverse=True)
+        print(successor)
+        return successor[0][0]

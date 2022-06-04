@@ -32,7 +32,17 @@ class Piece:
         self.image = Piece.imageDatabase[self.name][self.isBlack] # ♔ ♚ ♕ ♛ ♗ ♝ ♘ ♞ ♙ ♟ ♖ ♜
         self.isAlive = True
         self.firstMoveTaken = False
+        self.isEdibleEnPasse = False
+        
+        self.SCORE = None
+        if self.name == "king": self.SCORE = 100000
+        if self.name == "queen": self.SCORE = 1000
+        if self.name == "rook": self.SCORE = 400
+        if self.name == "bishop": self.SCORE = 300
+        if self.name == "knight": self.SCORE = 20
+        if self.name == "pawn": self.SCORE = 50
 
+        
     def getName(self):
         return self.name
 

@@ -8,3 +8,9 @@ from Piece import *
 if __name__ == "__main__":
 	board = Board()
 	board.visualize()
+
+	boardState = board.copy()
+
+	for state in boardState.historyBoards:
+		state.printBoardWPieceTerminal()
+

@@ -28,14 +28,15 @@ class Cell:
 		self.color  = self.getDefaultColor()
 		self.text   = piece.getImage() if self.piece != None else ""
 
-		self.button = Button(self.boardState.frm, text=self.text,
-							 height=0, width=3,
-							 command=self.click,
-							 padx=size[0], pady=size[1]
-							 ,compound="c")
-		self.button["font"] = font.Font(size=36)
-		self.button.config(bg=self.color)
-		self.button.grid(column=loc[1], row=loc[0])
+		#Rendering Cell for Tkinter
+		self.button = Button(self.boardState.frm, text = self.text,
+							 height = 0, width = 3,
+							 command = self.click,
+							 padx = size[0], pady = size[1]
+							 ,compound = "c")
+		self.button["font"] = font.Font(size = 36)
+		self.button.config(bg = self.color)
+		self.button.grid(column = loc[1], row = loc[0])
 
 	def setColor(self, color):
 		self.color = color
@@ -60,23 +61,22 @@ class Cell:
 
 		elif self.color == self.YELLOW:
 			self.boardState.resetBoardColor()
-			self.setPiece(self.boardState.currentSelectedPiece)
+			self.setPiece(self.boardState.currentSelectedPiece, self.boardState.currentSelectedPiece.firstMoveTaken)
 			self.boardState.isSelected = False
 			self.boardState.currentSelectedPiece = None            
 
 		elif self.color == self.GREEN:
 			self.boardState.resetBoardColor()
 			self.setPiece(self.boardState.currentSelectedPiece)
-
 			self.boardState.isSelected = False
-			self.boardState.currentSelectedPiece = None
+			# self.boardState.currentSelectedPiece = None
 			self.boardState.currentSelectedCell.clear()
 
 	def clear(self):
 		self.resetColor()
 		self.button['text'] = ""
 
-	def setPiece(self, piece, firstMoveTaken=True):
+	def setPiece(self, piece, firstMoveTaken = True):
 		self.button["text"] = (piece.getImage())
 		self.isOccupied = True
 		self.piece = piece

@@ -1,9 +1,9 @@
 # Cell.py
-
-from Piece import Piece
-
 from tkinter import Button
 import tkinter.font as font
+
+
+from Piece import Piece
 
 
 class Cell:
@@ -14,6 +14,7 @@ class Cell:
 
 	BLACK  = "darkgrey"
 	WHITE  = "white"
+	isSelected = False
 
 	def __init__(self, boardState, loc, size, piece=None):
 
@@ -28,56 +29,49 @@ class Cell:
 		self.color  = self.getDefaultColor()
 		self.text   = piece.getImage() if self.piece != None else ""
 
-		#Rendering Cell for Tkinter
-		self.button = Button(self.boardState.frm, text = self.text,
-							 height = 0, width = 3,
-							 command = self.click,
-							 padx = size[0], pady = size[1],
-							 compound = "c")
-							 
-		self.button["font"] = font.Font(size = 24)
-		self.button.config(bg = self.color)
-		self.button.grid(column = loc[1], row = loc[0])
-
+		self.button = Button(self.boardState.frm, text=self.text,
+							 height=0, width=3,
+							 command=self.click,
+							 padx=size[0], pady=size[1]
+							 ,compound="c")
+		self.button["font"] = font.Font(size=36)
+		self.button.config(bg=self.color)
+		self.button.grid(column=loc[1], row=loc[0])
 	def setColor(self, color):
 		self.color = color
 		self.button.configure(bg=self.color)
 
 	def click(self):
+		from Board import Board
 
-		if self.boardState.isSelected == True and self.color not in (self.YELLOW, self.GREEN, self.PURPLE, self.RED):
+		if Board.isSelected == True and self.color not in (self.YELLOW, self.GREEN, self.PURPLE, self.RED):
 			return
-		if self.boardState.isSelected == False and self.isOccupied == False:
+		if Board.isSelected == False and self.isOccupied == False:
 			return
 
 		if self.color in (self.BLACK, self.WHITE):
 			movableCells = self.showPossibleMoves(self.boardState)
 			for cell in movableCells:
 				cell.setColor(self.GREEN)
-			self.boardState.isSelected = True
-			self.boardState.currentSelectedPiece = self.piece
-			self.boardState.currentSelectedCell  = self
+			Board.isSelected = True
+			Board.currentSelectedPiece = self.piece
+			Board.currentSelectedCell  = self
 			self.setColor(self.YELLOW)
-			# print(self.piece.name, "is selected")
-			self.removePiece() 
-			# removePiece() to prevent invisible pieces 
-			# but also may be the cause of firstMoveTaken 
-			# being set to True
-			
+			self.removePiece()
+
 		elif self.color == self.YELLOW:
 			self.boardState.resetBoardColor()
-			self.setPiece(self.boardState.currentSelectedPiece)
-			self.boardState.isSelected = False
-			self.boardState.currentSelectedPiece = None            
+			self.setPiece(Board.currentSelectedPiece)
+			Board.isSelected = False
+			Board.currentSelectedPiece = None            
 
 		elif self.color == self.GREEN:
 			self.boardState.resetBoardColor()
-			self.setPiece(self.boardState.currentSelectedPiece)
+			self.setPiece(Board.currentSelectedPiece)
 
-			self.boardState.isSelected = False
-			self.boardState.currentSelectedPiece = None
-			self.boardState.currentSelectedCell.clear()
-
+			Board.isSelected = False
+			Board.currentSelectedPiece = None
+			Board.currentSelectedCell.clear()
 	def clear(self):
 		self.resetColor()
 		self.button['text'] = ""
@@ -171,15 +165,14 @@ class Cell:
 
 		elif name == "pawn":
 			pawn: Piece = self.piece
-			orgRow = self.loc[0] - 1# index of current row
-			orgCol = self.loc[1] - 1# index of current column
+			orgRow = self.loc[0] - 1 # index of current row
+			orgCol = self.loc[1] + 1 # index of current column
 			
 			# Pawn generally can only move one step a time
 			# At starting position, pawn can take two steps forward.
-
 			legalStep = 1 if pawn.firstMoveTaken else 2
 	
-			if pawn.isBlack:
+			if not pawn.isBlack:
 				# I. MOVE
 				# White pawn moves from row 2 (of index 1), towards row 8 (of index 7),
 				# The row increases while the column stays the same
@@ -187,23 +180,22 @@ class Cell:
 				for step in range(1, legalStep + 1):
 					if currentBoardState.board[orgRow + step][orgCol].isOccupied:
 						break
-					listOfLegalMoves.append([orgRow + step + 1, orgCol + 1]) 
+					listOfLegalMoves.append([orgRow + step, orgCol]) 
 
 				# II. ATTACK
 				# White pawn can attack diagonally,
-				# if the diagonal Cell contains a Piece of opposite color	
-				# handling right diagnal cell
-
-				if orgCol < 7:
-					cellDiagnonalUpRight: Cell = currentBoardState.board[orgRow + 1][orgCol + 1]
-					if cellDiagnonalUpRight.isOccupied and pawn.isBlack != cellDiagnonalUpRight.piece.isBlack:
-						listOfLegalMoves.append(cellDiagnonalUpRight.loc)
-
-				if orgCol > 0:
-					cellDiagnonalUpLeft: Cell = currentBoardState.board[orgRow + 1][orgCol - 1]
-					if cellDiagnonalUpLeft.isOccupied and pawn.isBlack != cellDiagnonalUpLeft.piece.isBlack:
-						listOfLegalMoves.append(cellDiagnonalUpLeft.loc)
-
+				# if the diagonal Cell contains a Piece of opposite color
+				cellDiagnonalUpRight: Cell = currentBoardState.board[orgRow + 1][orgCol + 1]
+				cellDiagnonalUpLeft: Cell = currentBoardState.board[orgRow + 1][orgCol - 1]
+	
+				if cellDiagnonalUpRight.isOccupied  \
+					and cellDiagnonalUpRight.piece.isBlack :
+					listOfLegalMoves.append([orgRow + 1, orgCol + 1])
+	
+				elif cellDiagnonalUpLeft.isOccupied \
+					and cellDiagnonalUpLeft.piece.isBlack:
+					listOfLegalMoves.append([orgRow + 1, orgCol - 1])
+	 
 			else:
 				# I. MOVE
 				# Black pawn moves from row 8 (of index 7), towards row 1 (of index 0),
@@ -212,24 +204,25 @@ class Cell:
 				for step in range(legalStep, 0, -1):
 					if currentBoardState.board[orgRow - step][orgCol].isOccupied:
 						break
-					listOfLegalMoves.append([orgRow - step + 1, orgCol + 1]) 
+					listOfLegalMoves.append([orgRow - step, orgCol]) 
 
 				# II. ATTACK
-				if orgCol < 7:
-					cellDiagnonalUpRight: Cell = currentBoardState.board[orgRow - 1][orgCol + 1]
-					if cellDiagnonalUpRight.isOccupied and pawn.isBlack != cellDiagnonalUpRight.piece.isBlack:
-						listOfLegalMoves.append(cellDiagnonalUpRight.loc)
-
-				if orgCol > 0:
-					cellDiagnonalUpLeft: Cell = currentBoardState.board[orgRow - 1][orgCol - 1]
-					if cellDiagnonalUpLeft.isOccupied and pawn.isBlack != cellDiagnonalUpLeft.piece.isBlack:
-						listOfLegalMoves.append(cellDiagnonalUpLeft.loc)
+				cellDiagnonalDownRight: Cell = currentBoardState.board[orgRow + 1][orgCol + 1]
+				cellDiagnonalDownLeft: Cell = currentBoardState.board[orgRow + 1][orgCol - 1]
+	
+				if cellDiagnonalDownRight.isOccupied \
+					and not cellDiagnonalDownRight.piece.isBlack :
+					listOfLegalMoves.append([orgRow - 1, orgCol + 1])
+	
+				elif cellDiagnonalDownLeft.isOccupied \
+					and not cellDiagnonalDownLeft.piece.isBlack:
+					listOfLegalMoves.append([orgRow - 1, orgCol - 1])
 				
 			# WAITING "EN PASSE" situation
 
 
 		else:
-			#remove excess space + time defining the same functions for each cell selected
+			#remove excess space + time defining the same functions
 			orgRow = self.loc[0] - 1 #original Row Index
 			orgCollumn = self.loc[1] - 1 #original Collumn Index
 
@@ -237,7 +230,6 @@ class Cell:
 			def rookMoves(): #append Cells that are Legal for Rook (Tried to make a function but no use -> hardcode instead)
 				#toUp
 				for i in range(8 - orgRow - 1): #subtract 1 from the loop range to ensure everything is in the board
-
 					listOfLegalMoves.append(currentBoardState.board[orgRow + i + 1][orgCollumn].loc) #exclude it's own loc (loop start from 0 so we have to + 1)
 					if currentBoardState.board[orgRow + i + 1][orgCollumn].isOccupied: #End the loop when the last Cell is occupied(still take it's loc)
 						break
@@ -246,7 +238,6 @@ class Cell:
 
 				#toDown
 				for i in range(orgRow): #skip self.loc[0] by adding "-1"
-
 					listOfLegalMoves.append(currentBoardState.board[orgRow - i - 1][orgCollumn].loc)
 					if currentBoardState.board[orgRow - i - 1][orgCollumn].isOccupied:
 						break
@@ -292,7 +283,6 @@ class Cell:
 
 				#toLowerRight
 				tempRow = orgRow
-
 				tempCol = orgCollumn
 				while tempRow < 8 and tempCol > -1:
 					tempCol += 1
@@ -334,7 +324,6 @@ class Cell:
 
 			possibleCell = currentBoardState.board[cellLoc[0] - 1][cellLoc[1] - 1]
 			
-
 			# listOfPossibleMoves.append(possibleCell)
 
 			if not possibleCell.isOccupied:

@@ -28,16 +28,14 @@ class Cell:
 		self.color  = self.getDefaultColor()
 		self.text   = piece.getImage() if self.piece != None else ""
 
-		#Rendering Cell for Tkinter
-		self.button = Button(self.boardState.frm, text = self.text,
-							 height = 0, width = 3,
-							 command = self.click,
-							 padx = size[0], pady = size[1],
-							 compound = "c")
-							 
-		self.button["font"] = font.Font(size = 24)
-		self.button.config(bg = self.color)
-		self.button.grid(column = loc[1], row = loc[0])
+		self.button = Button(self.boardState.frm, text=self.text,
+							 height=0, width=3,
+							 command=self.click,
+							 padx=size[0], pady=size[1]
+							 ,compound="c")
+		self.button["font"] = font.Font(size=36)
+		self.button.config(bg=self.color)
+		self.button.grid(column=loc[1], row=loc[0])
 
 	def setColor(self, color):
 		self.color = color
@@ -58,12 +56,8 @@ class Cell:
 			self.boardState.currentSelectedPiece = self.piece
 			self.boardState.currentSelectedCell  = self
 			self.setColor(self.YELLOW)
-			# print(self.piece.name, "is selected")
-			self.removePiece() 
-			# removePiece() to prevent invisible pieces 
-			# but also may be the cause of firstMoveTaken 
-			# being set to True
-			
+			self.removePiece()
+
 		elif self.color == self.YELLOW:
 			self.boardState.resetBoardColor()
 			self.setPiece(self.boardState.currentSelectedPiece)
@@ -229,7 +223,7 @@ class Cell:
 
 
 		else:
-			#remove excess space + time defining the same functions for each cell selected
+			#remove excess space + time defining the same functions
 			orgRow = self.loc[0] - 1 #original Row Index
 			orgCollumn = self.loc[1] - 1 #original Collumn Index
 

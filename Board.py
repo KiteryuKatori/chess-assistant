@@ -7,15 +7,17 @@ from tkinter import ttk
 class Board:
 
     mainPanel = Tk()
-    frm = ttk.Frame(mainPanel)
-    frm.grid()
 
-    currentSelectedCell  = None
-    currentSelectedPiece = None
-    isSelected           = False
+
+
     def __init__(self):
-
+        self.frm = ttk.Frame(self.mainPanel)
+        self.frm.grid()
         self.board = list()
+        self.isSelected = False
+        self.currentSelectedCell  = None
+        self.currentSelectedPiece = None
+        
         for x in range(8):
             row = list()
             for y in range(8):

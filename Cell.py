@@ -67,10 +67,10 @@ class Cell:
 
 		elif self.color == self.GREEN:
 			self.boardState.resetBoardColor()
-			self.setPiece(self.boardState.currentSelectedPiece)
+			self.setPiece(self.boardState.currentSelectedPiece, self.boardState.currentSelectedPiece.firstMoveTaken)
 
 			self.boardState.isSelected = False
-			self.boardState.currentSelectedPiece = None
+			# self.boardState.currentSelectedPiece = None
 			self.boardState.currentSelectedCell.clear()
 
 	def clear(self):

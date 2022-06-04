@@ -63,14 +63,19 @@ class CellAI:
                 leftCornerCell = currentBoardState.board[row-1][0]
                 rightCornerCell = currentBoardState.board[row-1][7]
 
+                leftPath = [not currentBoardState.board[row-1][c].isOccupied for c in range(1, col-1)]
+                rightPath = [not currentBoardState.board[row-1][c].isOccupied for c in range(col, 7)]
+
                 if ((leftCornerCell.isOccupied) and
                     (leftCornerCell.piece.name == "rook") and
-                    (leftCornerCell.piece.firstMoveTaken == False)):
-                    listOfLegalMoves.append([row, col - 2])                 
+                    (leftCornerCell.piece.firstMoveTaken == False) and
+                    (all(leftPath))):
+                    listOfLegalMoves.append([row, col - 2])
 
                 if ((rightCornerCell.isOccupied) and
                     (rightCornerCell.piece.name == "rook") and
-                    (rightCornerCell.piece.firstMoveTaken == False)):
+                    (rightCornerCell.piece.firstMoveTaken == False) and
+                    (all(rightPath))):
                     listOfLegalMoves.append([row, col + 2])
 
 
@@ -140,7 +145,7 @@ class CellAI:
                 # Black pawn moves from row 8 (of index 7), towards row 1 (of index 0),
                 # The row decreases while the column stays the same
                 # When the Cell ahead is occupied, pawn cannot travel.
-                for step in range(legalStep, 0, -1):
+                for step in range(1, legalStep + 1):
                     if currentBoardState.board[orgRow - step][orgCol].isOccupied:
                         break
                     listOfLegalMoves.append([orgRow - step + 1, orgCol + 1]) 
@@ -341,8 +346,8 @@ class Cell(CellAI):
 
 
         if self.color in (self.BLACK, self.WHITE):
-            if int(self.boardState.isBlackTurn) != self.piece.isBlack:
-                return
+            # if int(self.boardState.isBlackTurn) != self.piece.isBlack:
+            #     return
             movableCells = self.showPossibleMoves(self.boardState)
             for cell in movableCells:
                 cell.setColor(self.GREEN)
@@ -375,10 +380,10 @@ class Cell(CellAI):
             self.boardState.isBlackTurn = not self.boardState.isBlackTurn
             self.boardState.saveState()
 
-            if self.boardState.isBlackTurn:
-                nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
-                print(nextMoveSuggestion)
-                self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
+            # if self.boardState.isBlackTurn:
+            #     nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
+            #     print(nextMoveSuggestion)
+            #     self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
     def clear(self):
         self.resetColor()
         self.button['text'] = ""

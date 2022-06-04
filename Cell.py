@@ -363,8 +363,7 @@ class Cell(CellAI):
 
         elif self.color == self.YELLOW:
             self.boardState.resetBoardColor()
-            self.setPiece(self.boardState.currentSelectedPiece,
-                          self.boardState.currentSelectedPiece.firstMoveTaken)
+            self.setPiece(self.boardState.currentSelectedPiece, self.boardState.currentSelectedPiece.firstMoveTaken)
             self.boardState.isSelected = False
 
         elif self.color == self.GREEN:

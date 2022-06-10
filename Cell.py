@@ -37,7 +37,7 @@ class CellAI:
             return list()
 
         listOfLegalMoves = list()
-        listOfSpecialMoves = list()
+        listOfLegalSpecialMoves = list()
         name = self.piece.name
 
 
@@ -77,7 +77,8 @@ class CellAI:
                     (rightCornerCell.piece.name == "rook") and
                     (rightCornerCell.piece.firstMoveTaken == False) and
                     (all(checkAllRightPath))): #all() -> to check if all items in that list return True
-                    listOfLegalMoves.append([currRow, currCol + 2])
+                    listOfLegalSpecialMoves.append([currRow, currCol + 2])
+                    # listOfLegalMoves.append([currRow, currCol + 2])
 
 
         elif name == "knight":
@@ -134,12 +135,14 @@ class CellAI:
                     if orgCol < 7:
                         cellAdjacentRight: Cell = currentBoardState.board[orgRow][orgCol + 1]
                         if cellAdjacentRight.isOccupied and cellAdjacentRight.piece.isEdibleEnPasse:
-                            listOfLegalMoves.append([cellAdjacentRight.loc[0] + 1, cellAdjacentRight.loc[1]])
+                            listOfLegalSpecialMoves.append([cellAdjacentRight.loc[0] + 1, cellAdjacentRight.loc[1]])
+                            # listOfLegalMoves.append([cellAdjacentRight.loc[0] + 1, cellAdjacentRight.loc[1]])
 
                     if orgCol > 0:
                         cellAdjacentLeft: Cell = currentBoardState.board[orgRow][orgCol - 1]
                         if cellAdjacentLeft.isOccupied and cellAdjacentLeft.piece.isEdibleEnPasse:
-                            listOfLegalMoves.append([cellAdjacentLeft.loc[0] + 1, cellAdjacentLeft.loc[1]])
+                            listOfLegalSpecialMoves.append([cellAdjacentLeft.loc[0] + 1, cellAdjacentLeft.loc[1]])
+                            # listOfLegalMoves.append([cellAdjacentLeft.loc[0] + 1, cellAdjacentLeft.loc[1]])
 
             else:
                 # I. MOVE
@@ -166,12 +169,14 @@ class CellAI:
                     if orgCol < 7:
                         cellAdjacentRight: Cell = currentBoardState.board[orgRow][orgCol + 1]
                         if cellAdjacentRight.isOccupied and cellAdjacentRight.piece.isEdibleEnPasse:
-                            listOfLegalMoves.append([cellAdjacentRight.loc[0] - 1, cellAdjacentRight.loc[1]])
+                            listOfLegalSpecialMoves.append([cellAdjacentRight.loc[0] - 1, cellAdjacentRight.loc[1]])
+                            # listOfLegalMoves.append([cellAdjacentRight.loc[0] - 1, cellAdjacentRight.loc[1]])
 
                     if orgCol > 0:
                         cellAdjacentLeft: Cell = currentBoardState.board[orgRow][orgCol - 1]
                         if cellAdjacentLeft.isOccupied and cellAdjacentLeft.piece.isEdibleEnPasse:
-                            listOfLegalMoves.append([cellAdjacentLeft.loc[0] - 1, cellAdjacentLeft.loc[1]])
+                            listOfLegalSpecialMoves.append([cellAdjacentLeft.loc[0] - 1, cellAdjacentLeft.loc[1]])
+                            # listOfLegalMoves.append([cellAdjacentLeft.loc[0] - 1, cellAdjacentLeft.loc[1]])
             # WAITING "EN PASSE" situation
 
 
@@ -274,13 +279,12 @@ class CellAI:
                 bishopMoves()
 
         listOfPossibleMoves = list()
+        
         for cellLoc in listOfLegalMoves:
             if cellLoc == self.loc:
                 continue
 
-
             possibleCell = currentBoardState.board[cellLoc[0] - 1][cellLoc[1] - 1]
-            
 
             # listOfPossibleMoves.append(possibleCell)
 
@@ -289,7 +293,14 @@ class CellAI:
             elif possibleCell.piece.isBlack != self.piece.isBlack:
                 listOfPossibleMoves.append(possibleCell)
 
-        listOfPossibleMoves.append(listOfSpecialMoves)
+
+        listOfPossibleSpecialMoves = list()
+        for cellLoc in listOfLegalSpecialMoves:
+            specialCell = currentBoardState.board[cellLoc[0] - 1][cellLoc[1] - 1]
+            listOfPossibleSpecialMoves.append(specialCell)
+        
+        print(f"list of legalSpecialMove: {listOfPossibleSpecialMoves}")
+        listOfPossibleMoves.append(listOfPossibleSpecialMoves)
 
         return listOfPossibleMoves
 
@@ -307,7 +318,7 @@ class Cell(CellAI):
     YELLOW = "yellow"   # selected
     GREEN  = "green"    # possible move
     PURPLE = "purple"   # eat opponent
-    RED    = "red"      # special move (castling, en passant, promotion)
+    RED    = "red"      # special move (castling, en passe, promotion)
 
     BLACK  = "darkgrey"
     WHITE  = "white"
@@ -357,15 +368,18 @@ class Cell(CellAI):
             print(f"and it's len = {len(movableCells)}")
             for cell in movableCells: #this start from 1 - len(movableCells)
                 print(f"this is {cell}")
-                if (movableCells.index(cell) == len(movableCells) - 1): # If iterator got to listOfSpecialMoves(last of movableCells List)
+                if (movableCells.index(cell) == len(movableCells) - 1): # If iterator got to listOfPossibleSpecialMoves(last of movableCells List)
                     if len(cell) == 0: # no specialMove -> end
                         print("No specialMove avaiable")
                         break
                     for sCell in cell: #specialCell
+                        if (cell.index(sCell) == len(cell) - 1): #end of the list
                         # if len(sCell) == 0: # specialMove for ?piece
+                        #     print("no SCELL")
                         #     break
+                            pass
                         sCell.setColor(self.RED)
-                    print("just to check")
+                        print(f"Scell = {sCell}")
                     break
                 cell.setColor(self.GREEN)
                 # def isSpecialMove -> boolean
@@ -391,7 +405,8 @@ class Cell(CellAI):
             self.boardState.resetEnPasse()
             self.setPiece(self.boardState.currentSelectedPiece)
             if (self.boardState.currentSelectedPiece.name == "pawn" and 
-               (self.boardState.previousSelectedCell.loc[0] - self.loc[0]) in (-2, 2)
+               (self.boardState.previousSelectedCell.loc[0] - self.loc[0]) in (-2, 2) #set edible for all pawns if distance of a Pawn to another Pawn == 2 
+                                                                                      # -> only activate iSEdibleEnPasse in row 3, 4
                ):
                 self.boardState.currentSelectedPiece.isEdibleEnPasse = True
             

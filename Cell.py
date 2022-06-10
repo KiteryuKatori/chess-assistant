@@ -37,6 +37,7 @@ class CellAI:
             return list()
 
         listOfLegalMoves = list()
+        listOfSpecialMoves = list()
         name = self.piece.name
 
 
@@ -58,24 +59,25 @@ class CellAI:
 
             # check if the King is moved or not
             if self.piece.firstMoveTaken == False:
-                row = self.loc[0]
-                col = self.loc[1]
-                leftCornerCell = currentBoardState.board[row-1][0]
-                rightCornerCell = currentBoardState.board[row-1][7]
+                currRow = self.loc[0]
+                currCol = self.loc[1]
+                # leftCornerCell = currentBoardState.board[currRow-1][0]
+                rightCornerCell = currentBoardState.board[currRow-1][7]
 
-                checkAllLeftPath = [not currentBoardState.board[row-1][c].isOccupied for c in range(1, col-1)]
-                checkAllRightPath = [not currentBoardState.board[row-1][c].isOccupied for c in range(col, 7)]
-                if ((leftCornerCell.isOccupied) and
-                    (leftCornerCell.piece.name == "rook") and
-                    (leftCornerCell.piece.firstMoveTaken == False) and 
-                    (all(checkAllLeftPath))):
-                    listOfLegalMoves.append([row, col - 2])                 
+                # checkAllLeftPath = [not currentBoardState.board[currRow-1][c].isOccupied for c in range(1, currCol-1)]
+                # if ((leftCornerCell.isOccupied) and
+                #     (leftCornerCell.piece.name == "rook") and
+                #     (leftCornerCell.piece.firstMoveTaken == False) and 
+                #     (all(checkAllLeftPath))):
+                #     listOfLegalMoves.append([currRow, currCol - 2])
+                # Remove this part(Kings always cast on the right side -> kings always stay on collumn E)      
 
+                checkAllRightPath = [not currentBoardState.board[currRow-1][c].isOccupied for c in range(currCol, 7)]
                 if ((rightCornerCell.isOccupied) and
                     (rightCornerCell.piece.name == "rook") and
                     (rightCornerCell.piece.firstMoveTaken == False) and
-                    (all(checkAllRightPath))):
-                    listOfLegalMoves.append([row, col + 2])
+                    (all(checkAllRightPath))): #all() -> to check if all items in that list return True
+                    listOfLegalMoves.append([currRow, currCol + 2])
 
 
         elif name == "knight":
@@ -287,6 +289,7 @@ class CellAI:
             elif possibleCell.piece.isBlack != self.piece.isBlack:
                 listOfPossibleMoves.append(possibleCell)
 
+            listOfPossibleMoves.append(listOfSpecialMoves)
 
         return listOfPossibleMoves
 
@@ -323,19 +326,19 @@ class Cell(CellAI):
         self.color  = self.getDefaultColor()
         self.text   = piece.getImage() if self.piece != None else ""
 
-        self.button = Button(self.boardState.frm, text=self.text,
-                             height=0, width=3,
-                             command=self.click,
+        self.button = Button(self.boardState.frm, text = self.text,
+                             height = 0, width = 3,
+                             command = self.click,
                              padx=size[0], pady=size[1]
                              ,compound="c")
-        self.button["font"] = font.Font(size=36)
-        self.button.config(bg=self.color)
-        self.button.grid(column=loc[1], row=loc[0])
+        self.button["font"] = font.Font(size = 36)
+        self.button.config(bg = self.color)
+        self.button.grid(column = loc[1], row = loc[0])
         self.button.bind("<Return>", self.invoke_button)
 
     def setColor(self, color):
         self.color = color
-        self.button.configure(bg=self.color)
+        self.button.configure(bg = self.color)
 
     def click(self):
         if self.boardState.isSelected == True and self.color not in (self.YELLOW, self.GREEN, self.PURPLE, self.RED):
@@ -346,8 +349,16 @@ class Cell(CellAI):
         if self.color in (self.BLACK, self.WHITE):
             # if int(self.boardState.isBlackTurn) != self.piece.isBlack:
             #     return
+
+            # mark
+
             movableCells = self.showPossibleMoves(self.boardState)
             for cell in movableCells:
+                if (cell == len(movableCells) - 1): # If iterator got to listOfSpecialMoves(last of movableCells List)
+                    if len(Cell) == 0: # no specialMove -> end
+                        break
+                    for sCell in cell: #specialCell
+                        sCell.setColor(self.RED)
                 cell.setColor(self.GREEN)
                 # def isSpecialMove -> boolean
                 # input:

@@ -289,7 +289,7 @@ class CellAI:
             elif possibleCell.piece.isBlack != self.piece.isBlack:
                 listOfPossibleMoves.append(possibleCell)
 
-            listOfPossibleMoves.append(listOfSpecialMoves)
+        listOfPossibleMoves.append(listOfSpecialMoves)
 
         return listOfPossibleMoves
 
@@ -353,12 +353,20 @@ class Cell(CellAI):
             # mark
 
             movableCells = self.showPossibleMoves(self.boardState)
-            for cell in movableCells:
-                if (cell == len(movableCells) - 1): # If iterator got to listOfSpecialMoves(last of movableCells List)
-                    if len(Cell) == 0: # no specialMove -> end
+            print(movableCells)
+            print(f"and it's len = {len(movableCells)}")
+            for cell in movableCells: #this start from 1 - len(movableCells)
+                print(f"this is {cell}")
+                if (movableCells.index(cell) == len(movableCells) - 1): # If iterator got to listOfSpecialMoves(last of movableCells List)
+                    if len(cell) == 0: # no specialMove -> end
+                        print("No specialMove avaiable")
                         break
                     for sCell in cell: #specialCell
+                        # if len(sCell) == 0: # specialMove for ?piece
+                        #     break
                         sCell.setColor(self.RED)
+                    print("just to check")
+                    break
                 cell.setColor(self.GREEN)
                 # def isSpecialMove -> boolean
                 # input:

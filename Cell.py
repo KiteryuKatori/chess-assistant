@@ -61,18 +61,18 @@ class CellAI:
             if self.piece.firstMoveTaken == False:
                 currRow = self.loc[0]
                 currCol = self.loc[1]
-                # leftCornerCell = currentBoardState.board[currRow-1][0]
+                leftCornerCell = currentBoardState.board[currRow-1][0]
                 rightCornerCell = currentBoardState.board[currRow-1][7]
 
-                # checkAllLeftPath = [not currentBoardState.board[currRow-1][c].isOccupied for c in range(1, currCol-1)]
-                # if ((leftCornerCell.isOccupied) and
-                #     (leftCornerCell.piece.name == "rook") and
-                #     (leftCornerCell.piece.firstMoveTaken == False) and 
-                #     (all(checkAllLeftPath))):
-                #     listOfLegalMoves.append([currRow, currCol - 2])
-                # Remove this part(Kings always cast on the right side -> kings always stay on collumn E)      
-
+                checkAllLeftPath = [not currentBoardState.board[currRow-1][c].isOccupied for c in range(1, currCol-1)]
                 checkAllRightPath = [not currentBoardState.board[currRow-1][c].isOccupied for c in range(currCol, 7)]
+                if ((leftCornerCell.isOccupied) and
+                    (leftCornerCell.piece.name == "rook") and
+                    (leftCornerCell.piece.firstMoveTaken == False) and 
+                    (all(checkAllLeftPath))):
+                    listOfLegalSpecialMoves.append([currRow, currCol - 2])
+                    # listOfLegalMoves.append([currRow, currCol - 2])    
+
                 if ((rightCornerCell.isOccupied) and
                     (rightCornerCell.piece.name == "rook") and
                     (rightCornerCell.piece.firstMoveTaken == False) and
@@ -189,16 +189,12 @@ class CellAI:
             def rookMoves(): #append Cells that are Legal for Rook (Tried to make a function but no use -> hardcode instead)
                 #toUp
                 for i in range(8 - orgRow - 1): #subtract 1 from the loop range to ensure everything is in the board
-
                     listOfLegalMoves.append(currentBoardState.board[orgRow + i + 1][orgCollumn].loc) #exclude it's own loc (loop start from 0 so we have to + 1)
                     if currentBoardState.board[orgRow + i + 1][orgCollumn].isOccupied: #End the loop when the last Cell is occupied(still take it's loc)
                         break
-                
-                # listOfLegalMoves.append([99, 99])
 
                 #toDown
                 for i in range(orgRow): #skip self.loc[0] by adding "-1"
-
                     listOfLegalMoves.append(currentBoardState.board[orgRow - i - 1][orgCollumn].loc)
                     if currentBoardState.board[orgRow - i - 1][orgCollumn].isOccupied:
                         break
@@ -360,12 +356,11 @@ class Cell(CellAI):
         if self.color in (self.BLACK, self.WHITE):
             # if int(self.boardState.isBlackTurn) != self.piece.isBlack:
             #     return
-
             # mark
 
             movableCells = self.showPossibleMoves(self.boardState)
             print(movableCells)
-            print(f"and it's len = {len(movableCells)}")
+
             for cell in movableCells: #this start from 1 - len(movableCells)
                 print(f"this is {cell}")
                 if (movableCells.index(cell) == len(movableCells) - 1): # If iterator got to listOfPossibleSpecialMoves(last of movableCells List)
@@ -420,11 +415,12 @@ class Cell(CellAI):
             #     nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
             #     print(nextMoveSuggestion)
             #     self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
+
     def clear(self):
         self.resetColor()
         self.button['text'] = ""
 
-    def setPiece(self, piece, firstMoveTaken=True):
+    def setPiece(self, piece, firstMoveTaken = True):
         self.button["text"] = (piece.getImage())
         self.isOccupied = True
         self.piece = piece

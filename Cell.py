@@ -299,6 +299,21 @@ class CellAI:
 		self.piece = piece
 		self.piece.firstMoveTaken = firstMoveTaken
 
+	def isSpecialMove(self, movableCell): #0 = no, 1 = King castling, 2 = En Passe, 3 = Promoting Pawn
+		if self.piece.name == "king":
+			if self.loc[1] - movableCell.loc[1] in (-2, 2):
+				return 1 #Able to castling
+
+		if self.piece.name == "pawn":
+			if movableCell.loc[0] - 1 in (0, 7):
+				return 3 #Able to promote
+
+			if self.loc[0] - movableCell.loc[0] in (-1, 1) and self.loc[1] - movableCell.loc[1] in (-1, 1):
+				if (self.loc[0] - 1 == 4 and self.piece.isBlack): # Black
+					return 2 #En Passe
+				if self.loc[0] - 1 == 3 and not self.piece.isBlack: # White
+					return 2 #En Passe
+		return 0
 class Cell(CellAI):
 	YELLOW = "yellow"   # selected
 	GREEN  = "green"    # possible move
@@ -341,22 +356,6 @@ class Cell(CellAI):
 		if self.boardState.isSelected == False and self.isOccupied == False:
 			return
 
-		def isSpecialMove(currentCell, movableCell): #0 = no, 1 = King castling, 2 = En Passe, 3 = Promoting Pawn
-			if currentCell.piece.name == "king":
-				if currentCell.loc[1] - movableCell.loc[1] in (-2, 2):
-					return 1 #Able to castling
-
-			if currentCell.piece.name == "pawn":
-				if movableCell.loc[0] - 1 in (0, 7):
-					return 3 #Able to promote
-
-				if currentCell.loc[0] - movableCell.loc[0] in (-1, 1) and currentCell.loc[1] - movableCell.loc[1] in (-1, 1):
-					if (currentCell.loc[0] - 1 == 4 and currentCell.piece.isBlack): # Black
-						return 2 #En Passe
-					if currentCell.loc[0] - 1 == 3 and not currentCell.piece.isBlack: # White
-						return 2 #En Passe
-			return 0
-
 		if self.color in (self.BLACK, self.WHITE):
 			# if int(self.boardState.isBlackTurn) != self.piece.isBlack: # to ensure switching turn when a piece is moved
 			#     return
@@ -364,7 +363,7 @@ class Cell(CellAI):
 			movableCells = self.showPossibleMoves(self.boardState)
 			for cell in movableCells:
 				cell.setColor(self.GREEN)
-				if (isSpecialMove(self, cell)):
+				if (self.isSpecialMove(cell)):
 					cell.setColor(self.RED)
 			
 

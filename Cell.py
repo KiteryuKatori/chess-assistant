@@ -295,7 +295,6 @@ class CellAI:
 		self.piece = None
 
 	def setPiece(self, piece, firstMoveTaken = True):
-		# print(f"setPiece in Cell AI currLoc = ({self.loc[0] - 1}, {self.loc[1] - 1}")
 		self.isOccupied = True
 		self.piece = piece
 		self.piece.firstMoveTaken = firstMoveTaken
@@ -308,7 +307,6 @@ class Cell(CellAI):
 
 	BLACK  = "darkgrey"
 	WHITE  = "white"
-
 
 	def __init__(self, boardState, loc, size, piece=None):
 
@@ -346,22 +344,17 @@ class Cell(CellAI):
 		def isSpecialMove(currentCell, movableCell): #0 = no, 1 = King castling, 2 = En Passe, 3 = Promoting Pawn
 			if currentCell.piece.name == "king":
 				if currentCell.loc[1] - movableCell.loc[1] in (-2, 2):
-					print("King castling")
 					return 1 #Able to castling
 
 			if currentCell.piece.name == "pawn":
 				if movableCell.loc[0] - 1 in (0, 7):
-					print("Promote")
 					return 3 #Able to promote
 
 				if currentCell.loc[0] - movableCell.loc[0] in (-1, 1) and currentCell.loc[1] - movableCell.loc[1] in (-1, 1):
-					if currentCell.loc[0] - 1 == 4 and currentCell.piece.isBlack: # Black
-						print("En Passant")
+					if (currentCell.loc[0] - 1 == 4 and currentCell.piece.isBlack): # Black
 						return 2 #En Passe
 					if currentCell.loc[0] - 1 == 3 and not currentCell.piece.isBlack: # White
-						print("En Passant")
 						return 2 #En Passe
-			print("Nah, nothing")
 			return 0
 
 		if self.color in (self.BLACK, self.WHITE):
@@ -423,7 +416,6 @@ class Cell(CellAI):
 		self.button['text'] = ""
 
 	def setPiece(self, piece, firstMoveTaken = True):
-		print(f"setPiece in Cell = ({self.loc[0] - 1}, {self.loc[1] - 1})")
 		self.button["text"] = (piece.getImage())
 		self.isOccupied = True
 		self.piece = piece

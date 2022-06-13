@@ -319,8 +319,6 @@ class CellAI:
 	def doSpecialMove(self, currentBoardState): # This method execute AFTER setPiece method
 		orgRow = self.loc[0] - 1
 		orgCol = self.loc[1] - 1
-		print(f"orgRow = {orgRow}")
-		print(f"orgCol = {orgCol}")
 		if self.type == 1: #King castling
 			leftRook = currentBoardState.board[orgRow][0]
 			rightRook = currentBoardState.board[orgRow][7]
@@ -335,7 +333,6 @@ class CellAI:
 				rightRook.clear()
 
 		if self.type == 2: #En Passant
-			print("reached type = 2")
 			if not self.piece.isBlack:
 				currentBoardState.board[orgRow + 1][orgCol].removePiece()
 				currentBoardState.board[orgRow + 1][orgCol].clear()

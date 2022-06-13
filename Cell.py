@@ -317,12 +317,6 @@ class CellAI:
 		return 0
 
 	def doSpecialMove(self, currentBoardState): # This method execute AFTER setPiece method
-		print("reached func")
-		
-		if self.type == 0:
-			print("self.type == 0")
-			return
-
 		orgRow = self.loc[0] - 1
 		orgCol = self.loc[1] - 1
 		print(f"orgRow = {orgRow}")
@@ -341,8 +335,13 @@ class CellAI:
 				rightRook.clear()
 
 		if self.type == 2: #En Passant
-			currentBoardState.board[orgRow - 1][orgCol].removePiece()
-			currentBoardState.board[orgRow - 1][orgCol].cear()
+			print("reached type = 2")
+			if not self.piece.isBlack:
+				currentBoardState.board[orgRow + 1][orgCol].removePiece()
+				currentBoardState.board[orgRow + 1][orgCol].clear()
+			if self.piece.isBlack:
+				currentBoardState.board[orgRow - 1][orgCol].removePiece()
+				currentBoardState.board[orgRow - 1][orgCol].clear()
 
 		if self.type == 3: #Promoting Pawn
 			print("Pawn able to promote")

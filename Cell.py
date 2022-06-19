@@ -290,6 +290,8 @@ class CellAI:
 
 
 		return listOfPossibleMoves
+	def clear(self):
+		self.text = None
 
 	def removePiece(self):
 		self.isOccupied = False
@@ -343,8 +345,8 @@ class CellAI:
 		if self.type == 3: #Promoting Pawn
 			print("Pawn able to promote")
 
-		self.boardState.resetBoardColor()
-		self.boardState.resetEnPasse()
+		# self.boardState.resetBoardColor()
+		# self.boardState.resetEnPasse()
 class Cell(CellAI):
 	YELLOW = "yellow"   # selected
 	GREEN  = "green"    # possible move
@@ -389,8 +391,8 @@ class Cell(CellAI):
 			return
 
 		if self.color in (self.BLACK, self.WHITE):
-			# if int(self.boardState.isBlackTurn) != self.piece.isBlack: # to ensure switching turn when a piece is moved
-			#     return
+			if int(self.boardState.isBlackTurn) != self.piece.isBlack: # to ensure switching turn when a piece is moved
+				return
 
 			movableCells = self.showPossibleMoves(self.boardState)
 			for cell in movableCells:
@@ -437,10 +439,10 @@ class Cell(CellAI):
 			self.boardState.isBlackTurn = not self.boardState.isBlackTurn
 			self.boardState.saveState()
 
-			# if self.boardState.isBlackTurn:
-			#     nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
-			#     print(nextMoveSuggestion)
-			#     self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
+			if self.boardState.isBlackTurn:
+				nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
+				print(nextMoveSuggestion)
+				self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
 
 		elif self.color == self.RED:
 			self.setPiece(self.boardState.currentSelectedPiece)
@@ -456,6 +458,10 @@ class Cell(CellAI):
 			self.boardState.previousSelectedCell.clear()
 			self.boardState.isBlackTurn = not self.boardState.isBlackTurn
 			self.boardState.saveState()
+			if self.boardState.isBlackTurn:
+				nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
+				print(nextMoveSuggestion)
+				self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
 
 	def clear(self):
 		self.resetColor()

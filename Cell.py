@@ -17,6 +17,7 @@ class CellAI:
 		self.piece  = None
 		self.loc    = None
 		self.text   = None
+		self.type = 0 #0 = nothing special, 1 = King castling, 2 = En Passant, 3 = Promoting Pawn
 
 	def showPossibleMoves(self, currentBoardState):
 
@@ -299,7 +300,7 @@ class CellAI:
 		self.piece = piece
 		self.piece.firstMoveTaken = firstMoveTaken
 
-	def isSpecialMove(self, movableCell): #0 = no, 1 = King castling, 2 = En Passe, 3 = Promoting Pawn
+	def isSpecialMove(self, movableCell): #0 = no, 1 = King castling, 2 = En Passant, 3 = Promoting Pawn
 		if self.piece.name == "king":
 			if self.loc[1] - movableCell.loc[1] in (-2, 2):
 				return 1 #Able to castling
@@ -314,6 +315,36 @@ class CellAI:
 				if self.loc[0] - 1 == 3 and not self.piece.isBlack: # White
 					return 2 #En Passe
 		return 0
+
+	def doSpecialMove(self, currentBoardState): # This method execute AFTER setPiece method
+		orgRow = self.loc[0] - 1
+		orgCol = self.loc[1] - 1
+		if self.type == 1: #King castling
+			leftRook = currentBoardState.board[orgRow][0]
+			rightRook = currentBoardState.board[orgRow][7]
+			if orgCol - leftRook.loc[1] == 1:
+				currentBoardState.board[orgRow][3].setPiece(leftRook.piece)
+				leftRook.removePiece()
+				leftRook.clear()
+			
+			if orgCol - rightRook.loc[1] == -2: # = 6 - 8
+				currentBoardState.board[orgRow][5].setPiece(rightRook.piece)
+				rightRook.removePiece()
+				rightRook.clear()
+
+		if self.type == 2: #En Passant
+			if not self.piece.isBlack:
+				currentBoardState.board[orgRow + 1][orgCol].removePiece()
+				currentBoardState.board[orgRow + 1][orgCol].clear()
+			if self.piece.isBlack:
+				currentBoardState.board[orgRow - 1][orgCol].removePiece()
+				currentBoardState.board[orgRow - 1][orgCol].clear()
+
+		if self.type == 3: #Promoting Pawn
+			print("Pawn able to promote")
+
+		self.boardState.resetBoardColor()
+		self.boardState.resetEnPasse()
 class Cell(CellAI):
 	YELLOW = "yellow"   # selected
 	GREEN  = "green"    # possible move
@@ -335,6 +366,7 @@ class Cell(CellAI):
 		self.size   = size
 		self.color  = self.getDefaultColor()
 		self.text   = piece.getImage() if self.piece != None else ""
+		# self.type = 0 #0 = nothing special, 1 = King castling, 2 = En Passe, 3 = Promoting Pawn
 
 		self.button = Button(self.boardState.frm, text=self.text,
 							 height = 0, width = 3,
@@ -365,7 +397,7 @@ class Cell(CellAI):
 				cell.setColor(self.GREEN)
 				if (self.isSpecialMove(cell)):
 					cell.setColor(self.RED)
-			
+					cell.type = self.isSpecialMove(cell)
 
 			# specialCells = self.showSpecialMoves(self.boardState)
 			# for cell in specialCells:
@@ -409,6 +441,21 @@ class Cell(CellAI):
 			#     nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
 			#     print(nextMoveSuggestion)
 			#     self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
+
+		elif self.color == self.RED:
+			self.setPiece(self.boardState.currentSelectedPiece)
+
+			self.doSpecialMove(self.boardState)
+			# self.doSpecialMove(self.boardState.previousSelectedCell)
+
+			self.boardState.resetBoardColor()
+			self.boardState.resetEnPasse()
+
+			self.type = 0 # reset type
+			self.boardState.isSelected = False
+			self.boardState.previousSelectedCell.clear()
+			self.boardState.isBlackTurn = not self.boardState.isBlackTurn
+			self.boardState.saveState()
 
 	def clear(self):
 		self.resetColor()

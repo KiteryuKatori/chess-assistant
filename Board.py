@@ -39,8 +39,12 @@ class BoardAI:
         oldCell = self.board[oldLoc[0]][oldLoc[1]]
         newCell = self.board[newLoc[0]][newLoc[1]]
 
+        newCell.type = oldCell.isSpecialMove(newCell)
         newCell.setPiece(oldCell.piece)
         oldCell.removePiece()
+
+        if newCell.type > 0:
+            newCell.doSpecialMove(self)
 
     def getScore(self):
         totalScoreWhite = 0
@@ -183,5 +187,6 @@ class Board(BoardAI):
             successor.append([eachSuggestion, copiedVersion.getScore()])
 
         successor.sort(key = lambda x: x[1], reverse=True)
-        print(successor)
-        return successor[0][0]
+        optimalScore = successor[0][1]
+        listOfEqualMoves = [s for s in successor if s[1] == optimalScore]
+        return random.choice(listOfEqualMoves)[0]

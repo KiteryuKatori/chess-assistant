@@ -131,6 +131,16 @@ class Board(BoardAI):
         newBoardState = self.copy()
         newBoardState.updateHistory()
 
+    def freeze(self):
+        for row in self.board:
+            for cell in row:
+                cell.button['state'] = "disabled"
+
+    def release(self):
+        for row in self.board:
+            for cell in row:
+                cell.button['state'] = "normal"
+
     def printBoardWPieceTerminal(self) -> None:
 
         

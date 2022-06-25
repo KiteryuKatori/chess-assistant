@@ -312,7 +312,7 @@ class CellAI:
 				return 3 #Able to promote
 
 			if self.loc[0] - movableCell.loc[0] in (-1, 1) and self.loc[1] - movableCell.loc[1] in (-1, 1):
-				if (self.loc[0] - 1 == 4 and self.piece.isBlack): # Black
+				if self.loc[0] - 1 == 4 and self.piece.isBlack: # Black
 					return 2 #En Passe
 				if self.loc[0] - 1 == 3 and not self.piece.isBlack: # White
 					return 2 #En Passe
@@ -359,7 +359,7 @@ class CellAI:
 		listOfPiece = ["♘", "♗", "♖", "♕"]
 		# for i, piece in enumerate(listOfPiece):
 		# 	i_ = copy.deepcopy(i)
-		buttonK = Button(mainMenu, text=listOfPiece[0],
+		buttonK = Button(mainMenu, text = listOfPiece[0],
 							 height = 0, width = 3,
 							 command = lambda : self.handlePromotion(0, self, top, currentBoardState),
 							 padx = 0, pady = 0,
@@ -368,7 +368,7 @@ class CellAI:
 		buttonK.grid(column = 0, row = 0)
 		buttonK["font"] = font.Font(size=36)
 				
-		buttonB = Button(mainMenu, text=listOfPiece[1],
+		buttonB = Button(mainMenu, text = listOfPiece[1],
 							 height = 0, width = 3,
 							 command = lambda : self.handlePromotion(1, self, top, currentBoardState),
 							 padx = 0, pady = 0,
@@ -377,7 +377,7 @@ class CellAI:
 		buttonB.grid(column = 1, row = 0)
 		buttonB["font"] = font.Font(size=36)
 		
-		buttonR = Button(mainMenu, text=listOfPiece[2],
+		buttonR = Button(mainMenu, text = listOfPiece[2],
 							 height = 0, width = 3,
 							 command = lambda : self.handlePromotion(2, self, top, currentBoardState),
 							 padx = 0, pady = 0,
@@ -386,20 +386,20 @@ class CellAI:
 		buttonR.grid(column = 2, row = 0)
 		buttonR["font"] = font.Font(size=36)
 
-		buttonQ = Button(mainMenu, text=listOfPiece[3],
+		buttonQ = Button(mainMenu, text = listOfPiece[3],
 							 height = 0, width = 3,
 							 command = lambda : self.handlePromotion(3, self, top, currentBoardState),
 							 padx = 0, pady = 0,
 							 compound = "c",
 							 )
 		buttonQ.grid(column = 3, row = 0)
-		buttonQ["font"] = font.Font(size=36)
+		buttonQ["font"] = font.Font(size = 36)
 		# top.geometry("750x250")
 		top.title("Promotion for pawn")
 
 		top.grab_release()
 
-	def handlePromotion(self, option, cell, topWindow=None, boardState=None):
+	def handlePromotion(self, option, cell, topWindow = None, boardState = None):
 		if topWindow != None:
 			topWindow.destroy()
 	
@@ -548,7 +548,7 @@ class Cell(CellAI):
 
 	def resetColor(self):
 		self.color = self.getDefaultColor()
-		self.button.configure(bg=self.color)
+		self.button.configure(bg = self.color)
 
 	def copy(self):
 		"""

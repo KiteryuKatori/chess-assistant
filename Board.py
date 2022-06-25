@@ -54,7 +54,7 @@ class BoardAI:
             for cell in row:
                 if not cell.isOccupied:
                     continue
-                if cell.piece.isBlack:
+                if cell.piece.isBlack: #Check if this is a pawn? -> what row is it on currently?
                     totalScoreBlack += cell.piece.SCORE
                 else:
                     totalScoreWhite += cell.piece.SCORE
@@ -196,7 +196,7 @@ class Board(BoardAI):
             
             successor.append([eachSuggestion, copiedVersion.getScore()])
 
-        successor.sort(key = lambda x: x[1], reverse=True)
+        successor.sort(key = lambda x: x[1], reverse = True)
         optimalScore = successor[0][1]
         listOfEqualMoves = [s for s in successor if s[1] == optimalScore]
         return random.choice(listOfEqualMoves)[0]

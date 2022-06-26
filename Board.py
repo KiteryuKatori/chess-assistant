@@ -9,8 +9,9 @@ import random
 class BoardAI:
     historyBoards = list()
 
+    #Lists(to prevent re-declaration over and over again to preserve memory)
+
     def __init__(self):
-        
         self.board = list()
         self.isBlackTurn = None
 
@@ -49,15 +50,27 @@ class BoardAI:
     def getScore(self):
         totalScoreWhite = 0
         totalScoreBlack = 0
+        pawnMultiplier = [1, 1.1, 1.3, 1.8, 2.1, 2.6, 3.3]
+
 
         for row in self.board:
             for cell in row:
                 if not cell.isOccupied:
                     continue
-                if cell.piece.isBlack: #Check if this is a pawn? -> what row is it on currently?
-                    totalScoreBlack += cell.piece.SCORE
+                if cell.piece.isBlack: 
+                    if cell.piece.name == "pawn":
+                        totalScoreBlack += cell.piece.SCORE * pawnMultiplier[cell.loc[0] - 2] #Black -> increasing index
+                        # print(f"This {cell.piece.name} is currently at {cell.loc[0]}-{cell.loc[1]} and have a score of {cell.piece.SCORE * pawnMultiplier[cell.loc[0] - 2]}")
+                    else:
+                        totalScoreBlack += cell.piece.SCORE
                 else:
-                    totalScoreWhite += cell.piece.SCORE
+                    if cell.piece.name == "pawn":
+                        totalScoreWhite += cell.piece.SCORE * pawnMultiplier[7 - cell.loc[0]] #White -> decreasing index
+                        # print(f"This {cell.piece.name} is currently at {cell.loc[0]}-{cell.loc[1]} and have a score of {cell.piece.SCORE * pawnMultiplier[7 - cell.loc[0]]}")
+                    else:
+                        totalScoreWhite += cell.piece.SCORE
+
+
 
         return (totalScoreBlack - totalScoreWhite) / totalScoreBlack
 class Board(BoardAI):
@@ -183,7 +196,7 @@ class Board(BoardAI):
             for j, cell in enumerate(row):
                 if (cell.isOccupied) and \
                    (cell.piece.isBlack == True):
-                    oldLoc = [i, j]
+                    oldLoc = [i, j] #-> all Loc -1
                     listOfMoveableCell = cell.showPossibleMoves(rawBoardState)
                     for newCell in listOfMoveableCell:
                         newLoc = [newCell.loc[0] - 1 , newCell.loc[1] - 1]

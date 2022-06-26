@@ -101,7 +101,7 @@ class CellAI:
 			orgRow = self.loc[0] - 1# index of current row
 			orgCol = self.loc[1] - 1# index of current column
 			
-			# Pawn generally can only move one step a time
+			# Pawn generally can only move one step at a time
 			# At starting position, pawn can take two steps forward.
 
 			legalStep = 1 if pawn.firstMoveTaken else 2
@@ -241,7 +241,6 @@ class CellAI:
 
 				#toLowerRight
 				tempRow = orgRow
-
 				tempCol = orgCollumn
 				while tempRow < 8 and tempCol > -1:
 					tempCol += 1
@@ -343,7 +342,6 @@ class CellAI:
 				currentBoardState.board[orgRow - 1][orgCol].clear()
 
 		if self.type == 3: #Promoting Pawn
-			print("Pawn able to promote")
 			# currentBoardState.mainPanel.withdraw()
 			currentBoardState.freeze()
 
@@ -457,8 +455,9 @@ class Cell(CellAI):
 			return
 
 		if self.color in (self.BLACK, self.WHITE):
-			# if int(self.boardState.isBlackTurn) != self.piece.isBlack: # to ensure switching turn when a piece is moved
-			# 	return
+			#test
+			if int(self.boardState.isBlackTurn) != self.piece.isBlack: # to ensure switching turn when a piece is moved
+				return
 
 			movableCells = self.showPossibleMoves(self.boardState)
 			for cell in movableCells:
@@ -466,17 +465,6 @@ class Cell(CellAI):
 				if (self.isSpecialMove(cell)):
 					cell.setColor(self.RED)
 					cell.type = self.isSpecialMove(cell)
-
-			# specialCells = self.showSpecialMoves(self.boardState)
-			# for cell in specialCells:
-			# 	cell.setColor(self.RED)
-
-			# def isSpecialMove -> boolean
-			# input:
-			#   currCell -> var self: assert isOccupied
-			#   moveableCell -> var cell:
-			# Return:
-			#   tell if moveableCell is special for pieces
 
 			self.boardState.isSelected = True
 			self.boardState.currentSelectedPiece = self.piece
@@ -490,7 +478,6 @@ class Cell(CellAI):
 			self.boardState.isSelected = False
 
 		elif self.color == self.GREEN:
-
 			self.boardState.resetBoardColor()
 			self.boardState.resetEnPasse()
 			self.setPiece(self.boardState.currentSelectedPiece)
@@ -505,10 +492,11 @@ class Cell(CellAI):
 			self.boardState.isBlackTurn = not self.boardState.isBlackTurn
 			self.boardState.saveState()
 
-			# if self.boardState.isBlackTurn:
-			# 	nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
-			# 	print(nextMoveSuggestion)
-			# 	self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
+			#single
+			if self.boardState.isBlackTurn:
+				nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
+				print(nextMoveSuggestion)
+				self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
 
 		elif self.color == self.RED:
 			self.setPiece(self.boardState.currentSelectedPiece)
@@ -524,10 +512,12 @@ class Cell(CellAI):
 			self.boardState.previousSelectedCell.clear()
 			self.boardState.isBlackTurn = not self.boardState.isBlackTurn
 			self.boardState.saveState()
-			# if self.boardState.isBlackTurn:
-			# 	nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
-			# 	print(nextMoveSuggestion)
-			# 	self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
+
+			#single
+			if self.boardState.isBlackTurn:
+				nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
+				print(nextMoveSuggestion)
+				self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
 
 	def clear(self):
 		self.resetColor()

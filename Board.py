@@ -60,19 +60,17 @@ class BoardAI:
                 if cell.piece.isBlack: 
                     if cell.piece.name == "pawn":
                         totalScoreBlack += cell.piece.SCORE * pawnMultiplier[cell.loc[0] - 2] #Black -> increasing index
-                        # print(f"This {cell.piece.name} is currently at {cell.loc[0]}-{cell.loc[1]} and have a score of {cell.piece.SCORE * pawnMultiplier[cell.loc[0] - 2]}")
+                        # [might need this] print(f"This {cell.piece.name} is currently at {cell.loc[0]}-{cell.loc[1]} and have a score of {cell.piece.SCORE * pawnMultiplier[cell.loc[0] - 2]}")
                     else:
                         totalScoreBlack += cell.piece.SCORE
                 else:
                     if cell.piece.name == "pawn":
                         totalScoreWhite += cell.piece.SCORE * pawnMultiplier[7 - cell.loc[0]] #White -> decreasing index
-                        # print(f"This {cell.piece.name} is currently at {cell.loc[0]}-{cell.loc[1]} and have a score of {cell.piece.SCORE * pawnMultiplier[7 - cell.loc[0]]}")
                     else:
                         totalScoreWhite += cell.piece.SCORE
 
-
-
         return (totalScoreBlack - totalScoreWhite) / totalScoreBlack
+
 class Board(BoardAI):
 
     mainPanel = Tk()

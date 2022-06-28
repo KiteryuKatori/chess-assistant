@@ -2,7 +2,10 @@
 
 from Piece import Piece
 
+from tkinter import Toplevel
 from tkinter import Button
+from tkinter import ttk
+
 import tkinter.font as font
 import copy
 import time
@@ -280,9 +283,6 @@ class CellAI:
 
 			possibleCell = currentBoardState.board[cellLoc[0] - 1][cellLoc[1] - 1]
 			
-
-			# listOfPossibleMoves.append(possibleCell)
-
 			if not possibleCell.isOccupied:
 				listOfPossibleMoves.append(possibleCell)
 			elif possibleCell.piece.isBlack != self.piece.isBlack:
@@ -344,9 +344,75 @@ class CellAI:
 
 		if self.type == 3: #Promoting Pawn
 			print("Pawn able to promote")
+			# currentBoardState.mainPanel.withdraw()
+			currentBoardState.freeze()
 
-		# self.boardState.resetBoardColor()
-		# self.boardState.resetEnPasse()
+			self.open_popup(currentBoardState)
+			# currentBoardState.mainPanel.deiconify()
+	def open_popup(self, currentBoardState, ):
+		top = Toplevel(currentBoardState.mainPanel)
+		
+		top.grab_set()
+
+		mainMenu = ttk.Frame(top)
+		mainMenu.grid()
+		listOfPiece = ["♘", "♗", "♖", "♕"]
+		# for i, piece in enumerate(listOfPiece):
+		# 	i_ = copy.deepcopy(i)
+		buttonK = Button(mainMenu, text=listOfPiece[0],
+							 height = 0, width = 3,
+							 command = lambda : self.handlePromotion(0, self, top, currentBoardState),
+							 padx = 0, pady = 0,
+							 compound = "c",
+							 )		
+		buttonK.grid(column = 0, row = 0)
+		buttonK["font"] = font.Font(size=36)
+				
+		buttonB = Button(mainMenu, text=listOfPiece[1],
+							 height = 0, width = 3,
+							 command = lambda : self.handlePromotion(1, self, top, currentBoardState),
+							 padx = 0, pady = 0,
+							 compound = "c",
+							 )		
+		buttonB.grid(column = 1, row = 0)
+		buttonB["font"] = font.Font(size=36)
+		
+		buttonR = Button(mainMenu, text=listOfPiece[2],
+							 height = 0, width = 3,
+							 command = lambda : self.handlePromotion(2, self, top, currentBoardState),
+							 padx = 0, pady = 0,
+							 compound = "c",
+							 )
+		buttonR.grid(column = 2, row = 0)
+		buttonR["font"] = font.Font(size=36)
+
+		buttonQ = Button(mainMenu, text=listOfPiece[3],
+							 height = 0, width = 3,
+							 command = lambda : self.handlePromotion(3, self, top, currentBoardState),
+							 padx = 0, pady = 0,
+							 compound = "c",
+							 )
+		buttonQ.grid(column = 3, row = 0)
+		buttonQ["font"] = font.Font(size=36)
+		# top.geometry("750x250")
+		top.title("Promotion for pawn")
+
+		top.grab_release()
+
+	def handlePromotion(self, option, cell, topWindow=None, boardState=None):
+		if topWindow != None:
+			topWindow.destroy()
+	
+		optionPieceMapper = {
+			0: "knight",
+			1: "bishop",
+			2: "rook",
+			3: "queen",
+		}
+		cell.setPiece(Piece(optionPieceMapper[option], cell.piece.isBlack))
+		if boardState != None:
+			boardState.release()
+
 class Cell(CellAI):
 	YELLOW = "yellow"   # selected
 	GREEN  = "green"    # possible move
@@ -391,8 +457,8 @@ class Cell(CellAI):
 			return
 
 		if self.color in (self.BLACK, self.WHITE):
-			if int(self.boardState.isBlackTurn) != self.piece.isBlack: # to ensure switching turn when a piece is moved
-				return
+			# if int(self.boardState.isBlackTurn) != self.piece.isBlack: # to ensure switching turn when a piece is moved
+			# 	return
 
 			movableCells = self.showPossibleMoves(self.boardState)
 			for cell in movableCells:
@@ -439,10 +505,10 @@ class Cell(CellAI):
 			self.boardState.isBlackTurn = not self.boardState.isBlackTurn
 			self.boardState.saveState()
 
-			if self.boardState.isBlackTurn:
-				nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
-				print(nextMoveSuggestion)
-				self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
+			# if self.boardState.isBlackTurn:
+			# 	nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
+			# 	print(nextMoveSuggestion)
+			# 	self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
 
 		elif self.color == self.RED:
 			self.setPiece(self.boardState.currentSelectedPiece)
@@ -458,10 +524,10 @@ class Cell(CellAI):
 			self.boardState.previousSelectedCell.clear()
 			self.boardState.isBlackTurn = not self.boardState.isBlackTurn
 			self.boardState.saveState()
-			if self.boardState.isBlackTurn:
-				nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
-				print(nextMoveSuggestion)
-				self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
+			# if self.boardState.isBlackTurn:
+			# 	nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
+			# 	print(nextMoveSuggestion)
+			# 	self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
 
 	def clear(self):
 		self.resetColor()

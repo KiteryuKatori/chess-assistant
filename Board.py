@@ -47,6 +47,9 @@ class BoardAI:
         if newCell.type > 0:
             if newCell.type == 3:
                 newCell.doSpecialMove(self, optionPromotion)
+            else:
+                newCell.doSpecialMove(self)
+
 
     def getScore(self):
         totalScoreWhite = 0

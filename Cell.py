@@ -101,7 +101,7 @@ class CellAI:
 			orgRow = self.loc[0] - 1# index of current row
 			orgCol = self.loc[1] - 1# index of current column
 			
-			# Pawn generally can only move one step a time
+			# Pawn generally can only move one step at a time
 			# At starting position, pawn can take two steps forward.
 
 			legalStep = 1 if pawn.firstMoveTaken else 2
@@ -241,7 +241,6 @@ class CellAI:
 
 				#toLowerRight
 				tempRow = orgRow
-
 				tempCol = orgCollumn
 				while tempRow < 8 and tempCol > -1:
 					tempCol += 1
@@ -312,7 +311,7 @@ class CellAI:
 				return 3 #Able to promote
 
 			if self.loc[0] - movableCell.loc[0] in (-1, 1) and self.loc[1] - movableCell.loc[1] in (-1, 1):
-				if (self.loc[0] - 1 == 4 and self.piece.isBlack): # Black
+				if self.loc[0] - 1 == 4 and self.piece.isBlack: # Black
 					return 2 #En Passe
 				if self.loc[0] - 1 == 3 and not self.piece.isBlack: # White
 					return 2 #En Passe
@@ -343,7 +342,6 @@ class CellAI:
 				currentBoardState.board[orgRow - 1][orgCol].clear()
 
 		if self.type == 3: #Promoting Pawn
-			print("Pawn able to promote")
 			# currentBoardState.mainPanel.withdraw()
 			currentBoardState.freeze()
 
@@ -359,7 +357,7 @@ class CellAI:
 		listOfPiece = ["♘", "♗", "♖", "♕"]
 		# for i, piece in enumerate(listOfPiece):
 		# 	i_ = copy.deepcopy(i)
-		buttonK = Button(mainMenu, text=listOfPiece[0],
+		buttonK = Button(mainMenu, text = listOfPiece[0],
 							 height = 0, width = 3,
 							 command = lambda : self.handlePromotion(0, self, top, currentBoardState),
 							 padx = 0, pady = 0,
@@ -368,7 +366,7 @@ class CellAI:
 		buttonK.grid(column = 0, row = 0)
 		buttonK["font"] = font.Font(size=36)
 				
-		buttonB = Button(mainMenu, text=listOfPiece[1],
+		buttonB = Button(mainMenu, text = listOfPiece[1],
 							 height = 0, width = 3,
 							 command = lambda : self.handlePromotion(1, self, top, currentBoardState),
 							 padx = 0, pady = 0,
@@ -377,7 +375,7 @@ class CellAI:
 		buttonB.grid(column = 1, row = 0)
 		buttonB["font"] = font.Font(size=36)
 		
-		buttonR = Button(mainMenu, text=listOfPiece[2],
+		buttonR = Button(mainMenu, text = listOfPiece[2],
 							 height = 0, width = 3,
 							 command = lambda : self.handlePromotion(2, self, top, currentBoardState),
 							 padx = 0, pady = 0,
@@ -386,20 +384,20 @@ class CellAI:
 		buttonR.grid(column = 2, row = 0)
 		buttonR["font"] = font.Font(size=36)
 
-		buttonQ = Button(mainMenu, text=listOfPiece[3],
+		buttonQ = Button(mainMenu, text = listOfPiece[3],
 							 height = 0, width = 3,
 							 command = lambda : self.handlePromotion(3, self, top, currentBoardState),
 							 padx = 0, pady = 0,
 							 compound = "c",
 							 )
 		buttonQ.grid(column = 3, row = 0)
-		buttonQ["font"] = font.Font(size=36)
+		buttonQ["font"] = font.Font(size = 36)
 		# top.geometry("750x250")
 		top.title("Promotion for pawn")
 
 		top.grab_release()
 
-	def handlePromotion(self, option, cell, topWindow=None, boardState=None):
+	def handlePromotion(self, option, cell, topWindow = None, boardState = None):
 		if topWindow != None:
 			topWindow.destroy()
 	
@@ -457,8 +455,9 @@ class Cell(CellAI):
 			return
 
 		if self.color in (self.BLACK, self.WHITE):
-			# if int(self.boardState.isBlackTurn) != self.piece.isBlack: # to ensure switching turn when a piece is moved
-			# 	return
+			#test
+			if int(self.boardState.isBlackTurn) != self.piece.isBlack: # to ensure switching turn when a piece is moved
+				return
 
 			movableCells = self.showPossibleMoves(self.boardState)
 			for cell in movableCells:
@@ -466,17 +465,6 @@ class Cell(CellAI):
 				if (self.isSpecialMove(cell)):
 					cell.setColor(self.RED)
 					cell.type = self.isSpecialMove(cell)
-
-			# specialCells = self.showSpecialMoves(self.boardState)
-			# for cell in specialCells:
-			# 	cell.setColor(self.RED)
-
-			# def isSpecialMove -> boolean
-			# input:
-			#   currCell -> var self: assert isOccupied
-			#   moveableCell -> var cell:
-			# Return:
-			#   tell if moveableCell is special for pieces
 
 			self.boardState.isSelected = True
 			self.boardState.currentSelectedPiece = self.piece
@@ -490,7 +478,6 @@ class Cell(CellAI):
 			self.boardState.isSelected = False
 
 		elif self.color == self.GREEN:
-
 			self.boardState.resetBoardColor()
 			self.boardState.resetEnPasse()
 			self.setPiece(self.boardState.currentSelectedPiece)
@@ -505,10 +492,11 @@ class Cell(CellAI):
 			self.boardState.isBlackTurn = not self.boardState.isBlackTurn
 			self.boardState.saveState()
 
-			# if self.boardState.isBlackTurn:
-			# 	nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
-			# 	print(nextMoveSuggestion)
-			# 	self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
+			#single
+			if self.boardState.isBlackTurn:
+				nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
+				print(nextMoveSuggestion)
+				self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
 
 		elif self.color == self.RED:
 			self.setPiece(self.boardState.currentSelectedPiece)
@@ -524,10 +512,12 @@ class Cell(CellAI):
 			self.boardState.previousSelectedCell.clear()
 			self.boardState.isBlackTurn = not self.boardState.isBlackTurn
 			self.boardState.saveState()
-			# if self.boardState.isBlackTurn:
-			# 	nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
-			# 	print(nextMoveSuggestion)
-			# 	self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
+
+			#single
+			if self.boardState.isBlackTurn:
+				nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
+				print(nextMoveSuggestion)
+				self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
 
 	def clear(self):
 		self.resetColor()
@@ -548,7 +538,7 @@ class Cell(CellAI):
 
 	def resetColor(self):
 		self.color = self.getDefaultColor()
-		self.button.configure(bg=self.color)
+		self.button.configure(bg = self.color)
 
 	def copy(self):
 		"""

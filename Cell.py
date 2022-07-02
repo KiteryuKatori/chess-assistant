@@ -310,7 +310,7 @@ class CellAI:
 			if movableCell.loc[0] - 1 in (0, 7):
 				return 3 #Able to promote
 
-			if (self.loc[0] - movableCell.loc[0] in (-1, 1)) and (self.loc[1] - movableCell.loc[1] in (-1, 1)):
+			if (not movableCell.isOccupied) and (self.loc[0] - movableCell.loc[0] in (-1, 1)) and (self.loc[1] - movableCell.loc[1] in (-1, 1)):
 				if self.loc[0] - 1 == 4 and self.piece.isBlack: # Black
 					return 2 #En Passe
 				if self.loc[0] - 1 == 3 and not self.piece.isBlack: # White

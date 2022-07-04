@@ -36,7 +36,7 @@ class BoardAI:
         print('  ' + ' ---' * 8) 
         print()
 
-    def moveAI(self, oldLoc, newLoc):
+    def moveAI(self, oldLoc, newLoc, optionPromotion=None):
         oldCell = self.board[oldLoc[0]][oldLoc[1]]
         newCell = self.board[newLoc[0]][newLoc[1]]
 
@@ -45,7 +45,8 @@ class BoardAI:
         oldCell.removePiece()
 
         if newCell.type > 0:
-            newCell.doSpecialMove(self)
+            if newCell.type == 3:
+                newCell.doSpecialMove(self, optionPromotion)
 
     def getScore(self):
         totalScoreWhite = 0
@@ -129,13 +130,13 @@ class Board(BoardAI):
         self.mainPanel.mainloop()
         pass
 
-    def moveGUI(self, oldLoc, newLoc):
+    def moveGUI(self, oldLoc, newLoc, optionPromotion=None):
 
         oldCell = self.board[oldLoc[0]][oldLoc[1]]
         newCell = self.board[newLoc[0]][newLoc[1]]
         
         oldCell.click()
-        newCell.click()
+        newCell.click(optionPromotion)
 
     def saveState(self):
 
@@ -203,11 +204,22 @@ class Board(BoardAI):
         successor = list()
         for eachSuggestion in listOfInputForMoves:
             copiedVersion = copy.deepcopy(rawBoardState)
+            if rawBoardState.board[eachSuggestion[0][0]][eachSuggestion[0][1]].isSpecialMove(
+                rawBoardState.board[eachSuggestion[1][0]][eachSuggestion[1][1]]) == 3:
+                copiedVersion.moveAI(eachSuggestion[0], eachSuggestion[1], 0)
+                successor.append([eachSuggestion, copiedVersion.getScore(), 0])
+                
+                copiedVersion2 = copy.deepcopy(rawBoardState)
+                copiedVersion2.moveAI(eachSuggestion[0], eachSuggestion[1], 3)
+                successor.append([eachSuggestion, copiedVersion2.getScore(), 3])
+                
+
+                continue
             copiedVersion.moveAI(eachSuggestion[0], eachSuggestion[1])
             
-            successor.append([eachSuggestion, copiedVersion.getScore()])
+            successor.append([eachSuggestion, copiedVersion.getScore(), None])
 
         successor.sort(key = lambda x: x[1], reverse = True)
         optimalScore = successor[0][1]
         listOfEqualMoves = [s for s in successor if s[1] == optimalScore]
-        return random.choice(listOfEqualMoves)[0]
+        return random.choice(listOfEqualMoves)

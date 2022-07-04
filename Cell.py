@@ -310,14 +310,14 @@ class CellAI:
 			if movableCell.loc[0] - 1 in (0, 7):
 				return 3 #Able to promote
 
-			if self.loc[0] - movableCell.loc[0] in (-1, 1) and self.loc[1] - movableCell.loc[1] in (-1, 1):
+			if (not movableCell.isOccupied) and (self.loc[0] - movableCell.loc[0] in (-1, 1)) and (self.loc[1] - movableCell.loc[1] in (-1, 1)):
 				if self.loc[0] - 1 == 4 and self.piece.isBlack: # Black
 					return 2 #En Passe
 				if self.loc[0] - 1 == 3 and not self.piece.isBlack: # White
 					return 2 #En Passe
 		return 0
 
-	def doSpecialMove(self, currentBoardState): # This method execute AFTER setPiece method
+	def doSpecialMove(self, currentBoardState, optionPromotion=None): # This method execute AFTER setPiece method
 		orgRow = self.loc[0] - 1
 		orgCol = self.loc[1] - 1
 		if self.type == 1: #King castling
@@ -343,6 +343,10 @@ class CellAI:
 
 		if self.type == 3: #Promoting Pawn
 			# currentBoardState.mainPanel.withdraw()
+			if self.piece.isBlack:
+				self.handlePromotion(optionPromotion, self)
+				return
+
 			currentBoardState.freeze()
 
 			self.open_popup(currentBoardState)
@@ -448,7 +452,7 @@ class Cell(CellAI):
 		self.color = color
 		self.button.configure(bg = self.color)
 
-	def click(self):
+	def click(self, optionPromotion=None):
 		if self.boardState.isSelected == True and self.color not in (self.YELLOW, self.GREEN, self.PURPLE, self.RED):
 			return
 		if self.boardState.isSelected == False and self.isOccupied == False:
@@ -496,12 +500,12 @@ class Cell(CellAI):
 			if self.boardState.isBlackTurn:
 				nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
 				print(nextMoveSuggestion)
-				self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
+				self.boardState.moveGUI(nextMoveSuggestion[0][0], nextMoveSuggestion[0][1], nextMoveSuggestion[2])
 
 		elif self.color == self.RED:
 			self.setPiece(self.boardState.currentSelectedPiece)
 
-			self.doSpecialMove(self.boardState)
+			self.doSpecialMove(self.boardState, optionPromotion)
 			# self.doSpecialMove(self.boardState.previousSelectedCell)
 
 			self.boardState.resetBoardColor()
@@ -517,7 +521,7 @@ class Cell(CellAI):
 			if self.boardState.isBlackTurn:
 				nextMoveSuggestion = self.boardState.MakesRanDomMove(self.boardState)
 				print(nextMoveSuggestion)
-				self.boardState.moveGUI(nextMoveSuggestion[0], nextMoveSuggestion[1])
+				self.boardState.moveGUI(nextMoveSuggestion[0][0], nextMoveSuggestion[0][1], nextMoveSuggestion[2])
 
 	def clear(self):
 		self.resetColor()

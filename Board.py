@@ -47,6 +47,9 @@ class BoardAI:
         if newCell.type > 0:
             if newCell.type == 3:
                 newCell.doSpecialMove(self, optionPromotion)
+            else:
+                newCell.doSpecialMove(self)
+
 
     def getScore(self):
         totalScoreWhite = 0
@@ -204,18 +207,20 @@ class Board(BoardAI):
         successor = list()
         for eachSuggestion in listOfInputForMoves:
             copiedVersion = copy.deepcopy(rawBoardState)
-            if rawBoardState.board[eachSuggestion[0][0]][eachSuggestion[0][1]].isSpecialMove(
-                rawBoardState.board[eachSuggestion[1][0]][eachSuggestion[1][1]]) == 3:
-                copiedVersion.moveAI(eachSuggestion[0], eachSuggestion[1], 0)
+            oldLoc = eachSuggestion[0]
+            newLoc = eachSuggestion[1]
+            # check if the is promotion move
+            if rawBoardState.board[oldLoc[0]][oldLoc[1]]\
+                .isSpecialMove(rawBoardState.board[newLoc[0]][newLoc[1]]) == 3:
+                # version for Knight
+                copiedVersion.moveAI(oldLoc, newLoc, 0)
                 successor.append([eachSuggestion, copiedVersion.getScore(), 0])
-                
+                # version for Queen
                 copiedVersion2 = copy.deepcopy(rawBoardState)
-                copiedVersion2.moveAI(eachSuggestion[0], eachSuggestion[1], 3)
+                copiedVersion2.moveAI(oldLoc, newLoc, 3)
                 successor.append([eachSuggestion, copiedVersion2.getScore(), 3])
-                
-
                 continue
-            copiedVersion.moveAI(eachSuggestion[0], eachSuggestion[1])
+            copiedVersion.moveAI(oldLoc, newLoc)
             
             successor.append([eachSuggestion, copiedVersion.getScore(), None])
 

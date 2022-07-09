@@ -74,7 +74,45 @@ class BoardAI:
                         totalScoreWhite += cell.piece.SCORE
 
         return (totalScoreBlack - totalScoreWhite) / totalScoreBlack
+    def MakesRanDomMove(self, currState):
 
+        rawBoardState = currState.copy()
+
+        listOfInputForMoves = []
+        for i, row in enumerate(rawBoardState.board):
+            for j, cell in enumerate(row):
+                if (cell.isOccupied) and \
+                   (cell.piece.isBlack == True):
+                    oldLoc = [i, j] #-> all Loc -1
+                    listOfMoveableCell = cell.showPossibleMoves(rawBoardState)
+                    for newCell in listOfMoveableCell:
+                        newLoc = [newCell.loc[0] - 1 , newCell.loc[1] - 1]
+                        listOfInputForMoves.append([oldLoc, newLoc])
+
+        successor = list()
+        for eachSuggestion in listOfInputForMoves:
+            copiedVersion = copy.deepcopy(rawBoardState)
+            oldLoc = eachSuggestion[0]
+            newLoc = eachSuggestion[1]
+            # check if the is promotion move
+            if rawBoardState.board[oldLoc[0]][oldLoc[1]]\
+                .isSpecialMove(rawBoardState.board[newLoc[0]][newLoc[1]]) == 3:
+                # version for Knight
+                copiedVersion.moveAI(oldLoc, newLoc, 0)
+                successor.append([eachSuggestion, copiedVersion.getScore(), 0])
+                # version for Queen
+                copiedVersion2 = copy.deepcopy(rawBoardState)
+                copiedVersion2.moveAI(oldLoc, newLoc, 3)
+                successor.append([eachSuggestion, copiedVersion2.getScore(), 3])
+                continue
+            copiedVersion.moveAI(oldLoc, newLoc)
+            
+            successor.append([eachSuggestion, copiedVersion.getScore(), None])
+
+        successor.sort(key = lambda x: x[1], reverse = True)
+        optimalScore = successor[0][1]
+        listOfEqualMoves = [s for s in successor if s[1] == optimalScore]
+        return random.choice(listOfEqualMoves)
 class Board(BoardAI):
 
     mainPanel = Tk()
@@ -189,42 +227,4 @@ class Board(BoardAI):
 
         return boardAI
 
-    def MakesRanDomMove(self, currState):
-
-        rawBoardState = currState.copy()
-
-        listOfInputForMoves = []
-        for i, row in enumerate(rawBoardState.board):
-            for j, cell in enumerate(row):
-                if (cell.isOccupied) and \
-                   (cell.piece.isBlack == True):
-                    oldLoc = [i, j] #-> all Loc -1
-                    listOfMoveableCell = cell.showPossibleMoves(rawBoardState)
-                    for newCell in listOfMoveableCell:
-                        newLoc = [newCell.loc[0] - 1 , newCell.loc[1] - 1]
-                        listOfInputForMoves.append([oldLoc, newLoc])
-
-        successor = list()
-        for eachSuggestion in listOfInputForMoves:
-            copiedVersion = copy.deepcopy(rawBoardState)
-            oldLoc = eachSuggestion[0]
-            newLoc = eachSuggestion[1]
-            # check if the is promotion move
-            if rawBoardState.board[oldLoc[0]][oldLoc[1]]\
-                .isSpecialMove(rawBoardState.board[newLoc[0]][newLoc[1]]) == 3:
-                # version for Knight
-                copiedVersion.moveAI(oldLoc, newLoc, 0)
-                successor.append([eachSuggestion, copiedVersion.getScore(), 0])
-                # version for Queen
-                copiedVersion2 = copy.deepcopy(rawBoardState)
-                copiedVersion2.moveAI(oldLoc, newLoc, 3)
-                successor.append([eachSuggestion, copiedVersion2.getScore(), 3])
-                continue
-            copiedVersion.moveAI(oldLoc, newLoc)
-            
-            successor.append([eachSuggestion, copiedVersion.getScore(), None])
-
-        successor.sort(key = lambda x: x[1], reverse = True)
-        optimalScore = successor[0][1]
-        listOfEqualMoves = [s for s in successor if s[1] == optimalScore]
-        return random.choice(listOfEqualMoves)
+    

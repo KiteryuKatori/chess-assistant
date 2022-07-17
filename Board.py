@@ -112,7 +112,8 @@ class BoardAI:
             - The Score for the next move: Float number,
             - Option for promotion: 0=Knight, 3=Queen, None=NotPromotion/FirstDepth
         """
-        # random.seed((datetime.now().timestamp())*100000)
+        random.seed((datetime.now().timestamp())*100000)
+
         if depth == 0 or alpha >= beta:
             # print(successor)
             return successor
@@ -169,11 +170,10 @@ class BoardAI:
                         [copiedVersion, historicalMoves + [eachSuggestion], copiedVersion.getScore(), None],
                         depth-1, not isMaximizePlayer,
                         alpha, beta)
-
+                if newSuccessor[2] < -100000:
+                    continue
                 successor.append(newSuccessor)
                 alpha = self.alphaBetaPrunning(newSuccessor, alpha, beta, isMaximizePlayer)
-                # if isBreak:
-                #     break
 
             successor.sort(key = lambda x: x[2], reverse = isMaximizePlayer)
             optimalScore = successor[0][2]
@@ -221,14 +221,14 @@ class BoardAI:
 
                 else:
 
-                    # copiedVersion = copy.deepcopy(boardState)
                     copiedVersion = boardState.copy()
                     copiedVersion.moveAI(oldLoc, newLoc)
                     newSuccessor = self.minimax(
                         [copiedVersion, historicalMoves + [eachSuggestion], copiedVersion.getScore(), None],
                         depth-1, not isMaximizePlayer,
                         alpha, beta)
-
+                if newSuccessor[2] > 100000:
+                    continue
                 successor.append(newSuccessor)
                 beta = self.alphaBetaPrunning(newSuccessor, alpha, beta, isMaximizePlayer)
 
@@ -251,7 +251,7 @@ class BoardAI:
         # adjust the depth of the minimax function below to advance the
         # the calculator.
         # Note: the deeper the algo goes, the longer it took to find the optimal moves
-        s = self.minimax(initSuccessor,3)
+        s = self.minimax(initSuccessor,4)
         s[0].printBoardWPieceTerminal()
         return s[1][0], s[2], s[3]
 

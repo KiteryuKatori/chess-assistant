@@ -239,6 +239,13 @@ class BoardAI:
         finalOption = random.choice(listOfEqualMoves)
         return finalOption
 
+    def checkSuicidalMove(self, oldLoc, newLoc):
+        copiedBoardState = self.copy()
+        copiedBoardState.moveAI(oldLoc, newLoc)
+        initSuccessor = [copiedBoardState, None, None, None]
+        score = self.minimax(initSuccessor, 1 , not self.isBlackTurn)[2]
+        return score
+
     def MakesRanDomMove(self, currState):
         initSuccessor = [currState.copy(), None, None, None]
         # adjust the depth of the minimax function below to advance the

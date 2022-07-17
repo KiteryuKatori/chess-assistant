@@ -56,7 +56,8 @@ class BoardAI:
         # return random.uniform(-1,1)
         totalScoreWhite = 0
         totalScoreBlack = 0
-        pawnMultiplier = [1, 1, 1, 1, 2.1, 2.6, 3.3]
+
+        pawnMultiplier = [1, 1, 1, 1.5, 2, 2.5, 3]
 
         for row in self.board:
             for cell in row:

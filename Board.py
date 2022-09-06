@@ -104,7 +104,7 @@ class BoardAI:
             return newBeta
 
 
-    def minimax(self, successor, depth=4, isMaximizePlayer=True, alpha=-100000, beta=100000):
+    def minimax(self, successor, depth=2, isMaximizePlayer=True, alpha=-100000, beta=100000):
         """
         successor contains four objects:
             - Current State of the board: BoardAI
@@ -251,7 +251,7 @@ class BoardAI:
         # adjust the depth of the minimax function below to advance the
         # the calculator.
         # Note: the deeper the algo goes, the longer it took to find the optimal moves
-        s = self.minimax(initSuccessor,4)
+        s = self.minimax(initSuccessor, 2)
         s[0].printBoardWPieceTerminal()
         return s[1][0], s[2], s[3]
 

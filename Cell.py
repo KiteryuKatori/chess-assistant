@@ -468,10 +468,18 @@ class Cell(CellAI):
 		self.button.configure(bg = self.color)
 
 	def click(self, optionPromotion=None):
+
 		if self.boardState.isSelected == True and self.color not in (self.YELLOW, self.GREEN, self.PURPLE, self.RED):
 			return
 		if self.boardState.isSelected == False and self.isOccupied == False:
 			return
+
+		def printTurn(isBlackTurn):
+			if isBlackTurn:
+				print("Black Turn right now")
+			else:
+				print("White turn right now")
+
 
 		if self.color in (self.BLACK, self.WHITE):
 			#test
@@ -481,6 +489,12 @@ class Cell(CellAI):
 			movableCells = self.showPossibleMoves(self.boardState)
 
 			for cell in movableCells:
+				worstPossibleScore = self.boardState.checkSuicidalMove(
+					[self.loc[0] - 1, self.loc[1] - 1],
+					[cell.loc[0] - 1, cell.loc[1] - 1])
+				if (((self.boardState.isBlackTurn == True) and (worstPossibleScore < -100000)) or 
+				   ((self.boardState.isBlackTurn == False) and (worstPossibleScore > 100000))):
+				   continue
 				cell.setColor(self.GREEN)
 				if (self.isSpecialMove(cell)):
 					cell.setColor(self.RED)
@@ -510,6 +524,7 @@ class Cell(CellAI):
 			# self.boardState.currentSelectedPiece = None
 			self.boardState.previousSelectedCell.clear()
 			self.boardState.isBlackTurn = not self.boardState.isBlackTurn
+			printTurn(self.boardState.isBlackTurn)
 			self.boardState.saveState()
 
 			#single
@@ -531,6 +546,7 @@ class Cell(CellAI):
 			self.boardState.isSelected = False
 			self.boardState.previousSelectedCell.clear()
 			self.boardState.isBlackTurn = not self.boardState.isBlackTurn
+			printTurn(self.boardState.isBlackTurn)
 			self.boardState.saveState()
 
 			#single

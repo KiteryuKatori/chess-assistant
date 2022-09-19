@@ -104,7 +104,7 @@ class BoardAI:
             return newBeta
 
 
-    def minimax(self, successor, depth=4, isMaximizePlayer=True, alpha=-100000, beta=100000):
+    def minimax(self, successor, depth=2, isMaximizePlayer=True, alpha=-100000, beta=100000):
         """
         successor contains four objects:
             - Current State of the board: BoardAI
@@ -112,7 +112,8 @@ class BoardAI:
             - The Score for the next move: Float number,
             - Option for promotion: 0=Knight, 3=Queen, None=NotPromotion/FirstDepth
         """
-        # random.seed((datetime.now().timestamp())*100000)
+        random.seed((datetime.now().timestamp())*100000)
+
         if depth == 0 or alpha >= beta:
             # print(successor)
             return successor
@@ -169,11 +170,10 @@ class BoardAI:
                         [copiedVersion, historicalMoves + [eachSuggestion], copiedVersion.getScore(), None],
                         depth-1, not isMaximizePlayer,
                         alpha, beta)
-
+                if newSuccessor[2] < -100000:
+                    continue
                 successor.append(newSuccessor)
                 alpha = self.alphaBetaPrunning(newSuccessor, alpha, beta, isMaximizePlayer)
-                # if isBreak:
-                #     break
 
             successor.sort(key = lambda x: x[2], reverse = isMaximizePlayer)
             optimalScore = successor[0][2]
@@ -221,14 +221,14 @@ class BoardAI:
 
                 else:
 
-                    # copiedVersion = copy.deepcopy(boardState)
                     copiedVersion = boardState.copy()
                     copiedVersion.moveAI(oldLoc, newLoc)
                     newSuccessor = self.minimax(
                         [copiedVersion, historicalMoves + [eachSuggestion], copiedVersion.getScore(), None],
                         depth-1, not isMaximizePlayer,
                         alpha, beta)
-
+                if newSuccessor[2] > 100000:
+                    continue
                 successor.append(newSuccessor)
                 beta = self.alphaBetaPrunning(newSuccessor, alpha, beta, isMaximizePlayer)
 
@@ -239,12 +239,19 @@ class BoardAI:
         finalOption = random.choice(listOfEqualMoves)
         return finalOption
 
+    def checkSuicidalMove(self, oldLoc, newLoc):
+        copiedBoardState = self.copy()
+        copiedBoardState.moveAI(oldLoc, newLoc)
+        initSuccessor = [copiedBoardState, None, None, None]
+        score = self.minimax(initSuccessor, 1 , not self.isBlackTurn)[2]
+        return score
+
     def MakesRanDomMove(self, currState):
         initSuccessor = [currState.copy(), None, None, None]
         # adjust the depth of the minimax function below to advance the
         # the calculator.
         # Note: the deeper the algo goes, the longer it took to find the optimal moves
-        s = self.minimax(initSuccessor,3)
+        s = self.minimax(initSuccessor, 2)
         s[0].printBoardWPieceTerminal()
         return s[1][0], s[2], s[3]
 
